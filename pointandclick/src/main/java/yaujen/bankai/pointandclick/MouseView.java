@@ -49,6 +49,9 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private double currentRoll;
     private double refRoll;
 
+    private double velX;
+    private double velY;
+
     volatile boolean mousing;
     private Thread mouseThread = null;
     private Mouse mouse;
@@ -64,6 +67,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private ClickingMethod clickingMethod;
     private View targetView;
     private BackTapService backTapService;
+
+    private Accelerometer accelerometer;
 
     private boolean recalibrationEnabled;
 
@@ -90,6 +95,9 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         surfaceHolder = getHolder();
         paint = new Paint();
 
+        accelerometer = new Accelerometer(context);
+        accelerometer.mSensorManager.registerListener(accelerometer, accelerometer.mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
         setZOrderOnTop(true);
         surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 
@@ -107,6 +115,9 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         refRoll =0;
         positionControl = false;
         recalibrationEnabled = false;
+
+        velX = 0;
+        velY = 0;
 
         backTapService = new BackTapService((Activity)getContext(), this);
         clickingMethod = ClickingMethod.VOLUME_DOWN;
@@ -176,6 +187,13 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         double displacementPOS = tiltMagnitude* posTiltGain;
         double displacementVEL = velocity*SAMPLING_RATE;
 
+
+        double accelX = accelerometer.getX();
+        double accelY = accelerometer.getY();
+
+        velX += accelX*SAMPLING_RATE;
+        velY += accelY*SAMPLING_RATE;
+
         if(positionControl){
             double xOffSet = displacementPOS*Math.sin(tiltDirection);
             double yOffSet = displacementPOS*Math.cos(tiltDirection);
@@ -186,11 +204,17 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
             mouse.update((initialX + xOffSet),
                     (initialY + yOffSet));
         } else {
-            double xOffSet = displacementVEL*Math.sin(tiltDirection);
-            double yOffSet = displacementVEL*Math.cos(tiltDirection);
-            if(pitch > 0){
-                yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
-            }
+
+            System.out.println(accelX + ", " + accelY + ", " + velX + ", " + velY);
+//            double xOffSet = displacementVEL*Math.sin(tiltDirection);
+//            double yOffSet = displacementVEL*Math.cos(tiltDirection);
+//            if(pitch > 0){
+//                yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
+//            }
+
+            double xOffSet = -(velX*SAMPLING_RATE + 0.5*accelX*SAMPLING_RATE*SAMPLING_RATE);
+            double yOffSet = -(velY*SAMPLING_RATE + 0.5*accelY*SAMPLING_RATE*SAMPLING_RATE);
+
 
             mouse.displace(xOffSet,
                     yOffSet);
@@ -544,4 +568,6 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         fabParams.topToTop = topMargin;
         return fabParams;
     }
+
+
 }
