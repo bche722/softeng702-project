@@ -15,7 +15,7 @@ public class ReverseControl {
     private LinkedList<Double> xVals;
     private LinkedList<Double> yVals;
 
-    private static final int SIZE = 20;
+    private static final int SIZE = 50;
 
     private double lastX;
     private double lastY;
@@ -26,8 +26,13 @@ public class ReverseControl {
     private double xAccel;
     private double yAccel;
 
+    private double xOffset;
+    private double yOffset;
+
     private boolean UP;
     private boolean LEFT;
+
+    private int count;
 
 
     /**
@@ -47,6 +52,7 @@ public class ReverseControl {
         LEFT = true;
         xAccel = 0;
         yAccel = 0;
+        count = 0;
     }
 
     /**
@@ -57,36 +63,40 @@ public class ReverseControl {
         xAccel = accelerometer.getX();
         double avg = updateList(xAccel, xVals);
 
-        if (avg > lastX) {
-            if (LEFT = true) {
-                xVelocity = 0;
-            }
-            LEFT = false;
-        } else {
-            if (LEFT = false) {
-                xVelocity = 0;
-            }
-            LEFT = true;
-        }
+//        if (avg < lastX) {
+//            if (LEFT = true) {
+//                xVelocity = 0;
+//            }
+//            LEFT = false;
+//        } else {
+//            if (LEFT = false) {
+//                xVelocity = 0;
+//            }
+//            LEFT = true;
+//        }
 
 
         lastX = avg;
 
+        if(xAccel > -0.1 && xAccel < 0.1) {
+            xVelocity = 0;
+            xAccel = 0;
+        }
 
 
+        xOffset = xVelocity*4 + 0.5*avg*16;
 
+        xVelocity += avg*4;
 
-        xVelocity += accelerometer.getX()*0.02;
-
-        if (xVelocity > 2) {
-            xVelocity = 2;
-        } else if (xVelocity < -2) {
-            xVelocity = -2;
+        if (xVelocity > 20) {
+            xVelocity = 20;
+        } else if (xVelocity < -20) {
+            xVelocity = -20;
         }
 
 
 
-        return xVelocity*20;
+        return xOffset;
     }
 
     /**
@@ -98,39 +108,51 @@ public class ReverseControl {
         yAccel = accelerometer.getY();
         double avg = updateList(yAccel, xVals);
 
-        if (avg < lastY) {
-            if (UP = true) {
-                yVelocity = 0;
-            }
-            UP = false;
-        } else {
-            if (UP = false) {
-                yVelocity = 0;
-            }
-            UP = true;
+//        if (avg > lastY) {
+//            if (UP = true) {
+//                yVelocity = 0;
+//            }
+//            UP = false;
+//        } else {
+//            if (UP = false) {
+//                yVelocity = 0;
+//            }
+//            UP = true;
+//        }
+        if(yAccel > -0.1 && yAccel < 0.1) {
+            yVelocity = 0;
+            yAccel = 0;
         }
 
 
-        yVelocity += accelerometer.getY()*0.02;
+        yOffset = yVelocity*6 + 0.5*avg*36;
 
-        if (yVelocity > 2) {
-            yVelocity = 2;
-        } else if (yVelocity < -2) {
-            yVelocity = -2;
+        yVelocity += avg*6;
+
+        if (yVelocity > 20) {
+            yVelocity = 20;
+        } else if (yVelocity < -20) {
+            yVelocity = -20;
         }
 
 
         print();
-        return -yVelocity*20;
+        return -yOffset;
     }
 
     private void print() {
+        count += 1;
+        if (count == 1) {
+            count = 0;
 
-        System.out.println("Velocity:");
-        System.out.println("x: "+xVelocity+ "   y: "+ -yVelocity);
-        System.out.println("Acceleration:");
-        System.out.println("x: "+xAccel+ "   y: "+ yAccel);
-        System.out.println("\n\n");
+            System.out.println("x: "+xOffset+ "   y: "+ -yOffset);
+//            System.out.println("Velocity:");
+//            System.out.println("x: "+xVelocity+ "   y: "+ -yVelocity);
+//            System.out.println("Acceleration:");
+//            System.out.println("x: "+xAccel+ "   y: "+ yAccel);
+//            System.out.println("\n\n");
+        }
+
     }
 
     /**

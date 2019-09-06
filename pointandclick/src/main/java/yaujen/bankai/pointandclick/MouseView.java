@@ -70,6 +70,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     private boolean recalibrationEnabled;
 
+    private double aspectRatio;
+
     // Clicking Floating Button
     private MovableFloatingActionButton buttonClicker;
 
@@ -104,6 +106,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
         sensorFusion = new SensorFusion();
         sensorFusion.setMode(SensorFusion.Mode.FUSION);
+
+        aspectRatio = context.getResources().getDisplayMetrics().heightPixels/context.getResources().getDisplayMetrics().widthPixels;
 
         initialX = context.getResources().getDisplayMetrics().widthPixels/2;
         initialY = (context.getResources().getDisplayMetrics().heightPixels/2);
@@ -187,7 +191,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
         if(controlMethod == ControlMethod.POSITION_CONTROL){
             xOffset = displacementPOS*Math.sin(tiltDirection);
-            yOffset = displacementPOS*Math.cos(tiltDirection);
+            yOffset = aspectRatio*displacementPOS*Math.cos(tiltDirection);
             if(pitch > 0){
                 yOffset = -yOffset; // extra stuff that wasn't in original equation from paper ... hmmm
             }

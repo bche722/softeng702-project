@@ -16,7 +16,7 @@ public class Accelerometer implements SensorEventListener {
 
     public Accelerometer(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
 
@@ -24,7 +24,7 @@ public class Accelerometer implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
-        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (mySensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 
 
             long curTime = System.currentTimeMillis();
