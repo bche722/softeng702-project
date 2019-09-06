@@ -13,10 +13,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -25,6 +28,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.os.Handler;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.SENSOR_SERVICE;
 import static yaujen.bankai.pointandclick.Utility.aLog;
@@ -41,6 +47,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private final float BEZEL_THRESHHOLD = 50.0f;
 
     private boolean positionControl;
+
+    private AtomicBoolean clicked;
 
     private double initialX;
     private double initialY;
@@ -70,7 +78,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     // Clicking Floating Button
     private MovableFloatingActionButton buttonClicker;
 
-    public MouseView(Context context){
+    public MouseView(Context context) {
         super(context);
         init(context);
     }
@@ -85,10 +93,12 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         init(context);
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         //initializing drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
+
+        clicked = new AtomicBoolean(false);
 
         setZOrderOnTop(true);
         surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
@@ -100,15 +110,15 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         sensorFusion = new SensorFusion();
         sensorFusion.setMode(SensorFusion.Mode.FUSION);
 
-        initialX = context.getResources().getDisplayMetrics().widthPixels/2;
-        initialY = (context.getResources().getDisplayMetrics().heightPixels/2);
+        initialX = context.getResources().getDisplayMetrics().widthPixels / 2;
+        initialY = (context.getResources().getDisplayMetrics().heightPixels / 2);
         mouse = new Mouse(context, initialX, initialY);
-        refPitch =0;
-        refRoll =0;
+        refPitch = 0;
+        refRoll = 0;
         positionControl = false;
         recalibrationEnabled = false;
 
-        backTapService = new BackTapService((Activity)getContext(), this);
+        backTapService = new BackTapService((Activity) getContext(), this);
         clickingMethod = ClickingMethod.VOLUME_DOWN;
 
         setFocusableInTouchMode(true);
@@ -118,13 +128,14 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * The movable button is hidden at the start, so please call the method {@link MouseView#setClickingMethod(ClickingMethod)}
+     *
      * @param mFab
      */
-    public void setMovableFloatingActionButton(MovableFloatingActionButton mFab){
+    public void setMovableFloatingActionButton(MovableFloatingActionButton mFab) {
         buttonClicker = mFab;
         buttonClicker.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 click();
             }
         });
@@ -133,10 +144,11 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Hides or shows the movable button
+     *
      * @param visible
      */
-    public void setVisbilityMovableFloatingActionButton(boolean visible){
-        if(buttonClicker != null){
+    public void setVisbilityMovableFloatingActionButton(boolean visible) {
+        if (buttonClicker != null) {
             buttonClicker.setVisibilityButton(visible);
         }
     }
@@ -157,7 +169,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     @Override
     public void run() {
-        while (mousing){
+        while (mousing) {
             update();
             draw();
             control();
@@ -166,29 +178,29 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     private void update() {
         currentRoll = sensorFusion.getRoll();
-        double roll =  currentRoll - refRoll; // rotation along x-axis
+        double roll = currentRoll - refRoll; // rotation along x-axis
         currentPitch = sensorFusion.getPitch();
-        double pitch =  currentPitch - refPitch; // rotation along y-axis
+        double pitch = currentPitch - refPitch; // rotation along y-axis
 
-        double tiltMagnitude = Math.sqrt(roll*roll + pitch*pitch);
-        double tiltDirection = Math.asin(roll/tiltMagnitude);
-        double velocity = velTiltGain *tiltMagnitude;
-        double displacementPOS = tiltMagnitude* posTiltGain;
-        double displacementVEL = velocity*SAMPLING_RATE;
+        double tiltMagnitude = Math.sqrt(roll * roll + pitch * pitch);
+        double tiltDirection = Math.asin(roll / tiltMagnitude);
+        double velocity = velTiltGain * tiltMagnitude;
+        double displacementPOS = tiltMagnitude * posTiltGain;
+        double displacementVEL = velocity * SAMPLING_RATE;
 
-        if(positionControl){
-            double xOffSet = displacementPOS*Math.sin(tiltDirection);
-            double yOffSet = displacementPOS*Math.cos(tiltDirection);
-            if(pitch > 0){
+        if (positionControl) {
+            double xOffSet = displacementPOS * Math.sin(tiltDirection);
+            double yOffSet = displacementPOS * Math.cos(tiltDirection);
+            if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
             mouse.update((initialX + xOffSet),
                     (initialY + yOffSet));
         } else {
-            double xOffSet = displacementVEL*Math.sin(tiltDirection);
-            double yOffSet = displacementVEL*Math.cos(tiltDirection);
-            if(pitch > 0){
+            double xOffSet = displacementVEL * Math.sin(tiltDirection);
+            double yOffSet = displacementVEL * Math.cos(tiltDirection);
+            if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
@@ -212,7 +224,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     private void control() {
         try {
-            mouseThread.sleep((long)(SAMPLING_RATE*1000));
+            mouseThread.sleep((long) (SAMPLING_RATE * 1000));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -270,7 +282,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     /**
      * Sets the bitmap of the mouse object
      */
-    public void setMouseBitmap(Bitmap newBitmap){
+    public void setMouseBitmap(Bitmap newBitmap) {
         mouse.setBitmap(newBitmap);
     }
 
@@ -278,7 +290,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
      * Toggles between position and velocity control of pointer,
      * velocity control is then default
      */
-    public void enablePositionControl(boolean toEnable){
+    public void enablePositionControl(boolean toEnable) {
         positionControl = toEnable;
     }
 
@@ -291,7 +303,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         this.setVisbilityMovableFloatingActionButton(false);
         backTapService.stopService();
 
-        switch(clickingMethod) {
+        switch (clickingMethod) {
             case BACK_TAP:
                 backTapService.startService();
                 break;
@@ -308,35 +320,37 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     }
 
     /**
-    * Enables or disables the use of the volume up button to recalibrate
-    * @param enabled
-    */
+     * Enables or disables the use of the volume up button to recalibrate
+     *
+     * @param enabled
+     */
     public void enableRecalibrationByVolumeUp(boolean enabled) {
         this.recalibrationEnabled = enabled;
     }
 
     /**
      * Sets the whole area for clicking, this should be top most parent view of the activity
+     *
      * @param topMostView
      */
     public void setClickingTargetView(View topMostView) {
         this.targetView = topMostView;
     }
 
+
     @Override
     public void click() {
         aLog("Click", "Clicking now");
         // Obtain MotionEvent object
-        long downTime = SystemClock.uptimeMillis();
-        long eventTime = SystemClock.uptimeMillis() + 100;
-        float x = (float)mouse.getX();
-        float y = (float)mouse.getY();
+        long time = SystemClock.uptimeMillis();
+        float x = (float) mouse.getX();
+        float y = (float) mouse.getY();
 
         // List of meta states found here: developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
         int metaState = 0;
         MotionEvent motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
+                time,
+                time,
                 MotionEvent.ACTION_DOWN,
                 x,
                 y,
@@ -346,12 +360,21 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
         // Dispatch touch event to view
         targetView.dispatchTouchEvent(motionEvent);
+        clicked.set(true);
 
-        metaState = 0;
-        motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
-                MotionEvent.ACTION_UP,
+    }
+
+    @Override
+    public void move() {
+        long time = SystemClock.uptimeMillis();
+        float x = (float) mouse.getX();
+        float y = (float) mouse.getY();
+
+        int metaState = 0;
+        MotionEvent motionEvent = MotionEvent.obtain(
+                time,
+                time,
+                MotionEvent.ACTION_MOVE,
                 x,
                 y,
                 metaState
@@ -363,19 +386,52 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     }
 
     @Override
+    public void release() {
+        long time = SystemClock.uptimeMillis();
+        float x = (float) mouse.getX();
+        float y = (float) mouse.getY();
+
+        int metaState = 0;
+        MotionEvent motionEvent = MotionEvent.obtain(
+                time,
+                time,
+                MotionEvent.ACTION_UP,
+                x,
+                y,
+                metaState
+        );
+        motionEvent.setSource(420);
+        Log.d("testsss", "release");
+        // Dispatch touch event to view
+        targetView.dispatchTouchEvent(motionEvent);
+    }
+
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN && !clicked.get()) {
                 click();
+                release();
+                return true;
+            }
+        }
+
+        if (clickingMethod == ClickingMethod.VOLUME_DOWN && event.getAction() == KeyEvent.ACTION_UP) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                Log.d("testsss", "volume down released");
+                release();
+                clicked.set(false);
+
                 return true;
             }
         }
 
         if (recalibrationEnabled) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    calibratePointer();
-                    Toast.makeText(getContext(),"Calibrated pointer, pitch: "+ getRefPitch() + ", roll: "+getRefRoll(),Toast.LENGTH_SHORT).show();
-                    return true;
+                calibratePointer();
+                Toast.makeText(getContext(), "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
+                return true;
             }
         }
 
@@ -386,7 +442,30 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getSource() == 420) {
             aLog("Bezel", "own source");
-            return super.onTouchEvent(event);
+            //return super.onTouchEvent(event);
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.d("testsss", clicked.get() + "");
+
+                Thread loggingThread = new Thread(new Runnable() {
+                    public void run() {
+                        while (clicked.get()) {
+                            Log.d(VIEW_LOG_TAG, "Touching Down");
+
+                            move();
+
+                        }
+                        Log.d(VIEW_LOG_TAG, "Not Touching");
+                    }
+                });
+
+                loggingThread.start();
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                clicked.set(false);
+                Log.d("testsss", "action up");
+            } else {
+                Log.d("testsss", "else");
+                return super.onTouchEvent(event);
+            }
         }
         if (clickingMethod == ClickingMethod.BEZEL_SWIPE) {
             aLog("Bezel", "bezel");
@@ -408,7 +487,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
                     aLog("Bezel", "Touched right");
                     click();
                     return true;
-                }   else {
+                } else {
                     aLog("Bezel", "Didn't touch bezel");
                     return false;
                 }
@@ -420,6 +499,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Sets the tilt gain value for position control
+     *
      * @param positionTiltGain Tilt gain value if position control is selected
      */
     public void setPosTiltGain(int positionTiltGain) {
@@ -428,6 +508,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Sets the tilt gain value for velocity control
+     *
      * @param velTiltGain Tilt gain value if position control is selected
      */
     public void setVelTiltGain(int velTiltGain) {
@@ -456,6 +537,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Gets reference Value used for calibration of the initial pitch value
+     *
      * @return Reference Value used for calibration of the initial pitch value
      */
     public double getRefPitch() {
@@ -480,6 +562,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Gets reference Value used for calibration of the initial roll value
+     *
      * @return Reference Value used for calibration of the initial roll value
      */
     public double getRefRoll() {
@@ -506,7 +589,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     /**
      * Calibrate the accelerometer based pointer to consider the current pitch and roll as the reference point, resting position
      */
-    public void calibratePointer(){
+    public void calibratePointer() {
         setRefPitch(currentPitch);
         setRefRoll(currentRoll);
     }
@@ -514,9 +597,10 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     /**
      * Convenience method to return the ConstraintLayout.LayoutParams for a full screen view,
      * such as this MouseView
+     *
      * @return Full screen ConstraintLayout.LayoutParams
      */
-    public static ConstraintLayout.LayoutParams getFullScreenConstraintLayoutParams(){
+    public static ConstraintLayout.LayoutParams getFullScreenConstraintLayoutParams() {
         ConstraintLayout.LayoutParams fullScreenParams = new ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.MATCH_PARENT,
                 ConstraintLayout.LayoutParams.MATCH_PARENT);
@@ -531,11 +615,12 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
     /**
      * Convenience method to return the ConstraintLayout.LayoutParams for a wrapped view
+     *
      * @param topMargin
      * @param rightMargin
      * @return Customised ConstraintLayout.LayoutParams for a wrapped view
      */
-    public static ConstraintLayout.LayoutParams getFabConstraintLayoutParams(int topMargin, int rightMargin){
+    public static ConstraintLayout.LayoutParams getFabConstraintLayoutParams(int topMargin, int rightMargin) {
         ConstraintLayout.LayoutParams fabParams = new ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT);
@@ -544,4 +629,6 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         fabParams.topToTop = topMargin;
         return fabParams;
     }
+
+
 }

@@ -2,13 +2,9 @@ package yaujen.bankai.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,22 +12,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
-
-import yaujen.bankai.pointandclick.Clicker;
+import yaujen.bankai.myapplication.Draw.DrawActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 public class DemoActivity extends AppCompatActivity {
-    public enum Tasks { Keyboard, Numpad, Wikipedia };
+    public enum Tasks { Keyboard, Numpad, Wikipedia , Draw};
 
     // Dropdown Options
     public static final String[] CONTROL_METHODS = new String[]{"Position", "Velocity"};
     public static final String[] TILT_GAINS = new String[]{"10","15","20","25","30","35","40","45","50","55","60","65","70","75","80","85","90","95","100","105","110","115","120","125","130","135","140","145","150","160","170","180","190","200","225","250","275","300","325","350","375","400"};
     public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(),ClickingMethod.FLOATING_BUTTON.name(),ClickingMethod.BACK_TAP.name(),ClickingMethod.BEZEL_SWIPE.name() };
-    public static final String[] TASKS = new String[]{Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name()};
+    public static final String[] TASKS = new String[]{Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), Tasks.Draw.name()};
 
     // KEY 
     public static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
@@ -93,6 +84,8 @@ public class DemoActivity extends AppCompatActivity {
                     myIntent = new Intent(DemoActivity.this, NumpadActivity.class);
                 } else if(task.equals(Tasks.Wikipedia.name())){
                     myIntent = new Intent(DemoActivity.this, WikipediaActivity.class);
+                } else if(task.equals(Tasks.Draw.name())){
+                    myIntent = new Intent(DemoActivity.this, DrawActivity.class);
                 }
 
                 if(myIntent != null) {
