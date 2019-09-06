@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
@@ -82,7 +83,7 @@ public class WikipediaActivity extends AppCompatActivity {
         aLog("Wikipedia", clickingMethod);
         aLog("Wikipedia", tiltGain + "");
 
-        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
+        mouseView.enablePositionControl(ControlMethod.valueOf(controlMethod));
         mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         mouseView.setPosTiltGain(tiltGain);
         mouseView.setVelTiltGain(tiltGain);

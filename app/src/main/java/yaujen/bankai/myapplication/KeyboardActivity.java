@@ -14,6 +14,7 @@ import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
@@ -71,7 +72,7 @@ public class KeyboardActivity extends AppCompatActivity {
         aLog("Wikipedia", clickingMethod);
         aLog("Wikipedia", tiltGain + "");
 
-        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
+        mouseView.enablePositionControl(ControlMethod.valueOf(controlMethod));
         mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         mouseView.setPosTiltGain(tiltGain);
         mouseView.setVelTiltGain(tiltGain);

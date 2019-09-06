@@ -40,7 +40,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private final double SAMPLING_RATE = 0.02;
     private final float BEZEL_THRESHHOLD = 50.0f;
 
-    private boolean positionControl;
+    private ControlMethod controlMethod;
 
     private double initialX;
     private double initialY;
@@ -49,8 +49,6 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private double currentRoll;
     private double refRoll;
 
-    private double velX;
-    private double velY;
 
     volatile boolean mousing;
     private Thread mouseThread = null;
@@ -68,7 +66,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     private View targetView;
     private BackTapService backTapService;
 
-    private Accelerometer accelerometer;
+    private ReverseControl revControl;
 
     private boolean recalibrationEnabled;
 
@@ -95,8 +93,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         surfaceHolder = getHolder();
         paint = new Paint();
 
-        accelerometer = new Accelerometer(context);
-        accelerometer.mSensorManager.registerListener(accelerometer, accelerometer.mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        revControl = new ReverseControl(context);
 
         setZOrderOnTop(true);
         surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
@@ -113,11 +110,9 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         mouse = new Mouse(context, initialX, initialY);
         refPitch =0;
         refRoll =0;
-        positionControl = false;
+        controlMethod = ControlMethod.POSITION_CONTROL;
         recalibrationEnabled = false;
 
-        velX = 0;
-        velY = 0;
 
         backTapService = new BackTapService((Activity)getContext(), this);
         clickingMethod = ClickingMethod.VOLUME_DOWN;
@@ -187,37 +182,34 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         double displacementPOS = tiltMagnitude* posTiltGain;
         double displacementVEL = velocity*SAMPLING_RATE;
 
+        double xOffset;
+        double yOffset;
 
-        double accelX = accelerometer.getX();
-        double accelY = accelerometer.getY();
-
-        velX += accelX*SAMPLING_RATE;
-        velY += accelY*SAMPLING_RATE;
-
-        if(positionControl){
-            double xOffSet = displacementPOS*Math.sin(tiltDirection);
-            double yOffSet = displacementPOS*Math.cos(tiltDirection);
+        if(controlMethod == ControlMethod.POSITION_CONTROL){
+            xOffset = displacementPOS*Math.sin(tiltDirection);
+            yOffset = displacementPOS*Math.cos(tiltDirection);
             if(pitch > 0){
-                yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
+                yOffset = -yOffset; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
-            mouse.update((initialX + xOffSet),
-                    (initialY + yOffSet));
+            mouse.update((initialX + xOffset),
+                    (initialY + yOffset));
+        } else if(controlMethod == ControlMethod.VELOCITY_CONTROL) {
+
+            xOffset = displacementVEL*Math.sin(tiltDirection);
+            yOffset = displacementVEL*Math.cos(tiltDirection);
+            if(pitch > 0){
+                yOffset = -yOffset; // extra stuff that wasn't in original equation from paper ... hmmm
+            }
+
+
+            mouse.displace(xOffset,
+                    yOffset);
         } else {
-
-            System.out.println(accelX + ", " + accelY + ", " + velX + ", " + velY);
-//            double xOffSet = displacementVEL*Math.sin(tiltDirection);
-//            double yOffSet = displacementVEL*Math.cos(tiltDirection);
-//            if(pitch > 0){
-//                yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
-//            }
-
-            double xOffSet = -(velX*SAMPLING_RATE + 0.5*accelX*SAMPLING_RATE*SAMPLING_RATE);
-            double yOffSet = -(velY*SAMPLING_RATE + 0.5*accelY*SAMPLING_RATE*SAMPLING_RATE);
-
-
-            mouse.displace(xOffSet,
-                    yOffSet);
+            xOffset = revControl.getXOffset();
+            yOffset = revControl.getYOffset();
+            mouse.displace(xOffset,
+                    yOffset);
         }
     }
 
@@ -302,8 +294,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
      * Toggles between position and velocity control of pointer,
      * velocity control is then default
      */
-    public void enablePositionControl(boolean toEnable){
-        positionControl = toEnable;
+    public void enablePositionControl(ControlMethod method){
+        controlMethod = method;
     }
 
     public ClickingMethod getClickingMethod() {
