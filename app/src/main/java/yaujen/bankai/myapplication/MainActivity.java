@@ -75,18 +75,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ((Button)findViewById(R.id.button3)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(cursorToggler){
-                    mouseView.setMouseBitmap(Mouse.getMouseBitmap2(MainActivity.this));
-                } else {
-                    mouseView.setMouseBitmap(Mouse.getMouseBitmap1(MainActivity.this));
-                }
-                cursorToggler = !cursorToggler;
-
-            }
-        });
+//        ((Button)findViewById(R.id.button3)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(cursorToggler){
+//                    mouseView.setMouseBitmap(Mouse.getMouseBitmap2(MainActivity.this));
+//                } else {
+//                    mouseView.setMouseBitmap(Mouse.getMouseBitmap1(MainActivity.this));
+//                }
+//                cursorToggler = !cursorToggler;
+//
+//            }
+//        });
 
 
 
