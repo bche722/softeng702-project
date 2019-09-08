@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 import android.os.Handler;
@@ -188,6 +189,10 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         double displacementPOS = tiltMagnitude * posTiltGain;
         double displacementVEL = velocity * SAMPLING_RATE;
 
+        if (clicked.get()){
+            move();
+
+        }
         if (positionControl) {
             double xOffSet = displacementPOS * Math.sin(tiltDirection);
             double yOffSet = displacementPOS * Math.cos(tiltDirection);
@@ -371,18 +376,53 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         float y = (float) mouse.getY();
 
         int metaState = 0;
-        MotionEvent motionEvent = MotionEvent.obtain(
-                time,
-                time,
-                MotionEvent.ACTION_MOVE,
-                x,
-                y,
-                metaState
-        );
-        motionEvent.setSource(420);
 
-        // Dispatch touch event to view
-        targetView.dispatchTouchEvent(motionEvent);
+        Log.d("testa",targetView.getLeft()+"  "+targetView.getTop());
+       // Log.d("testa",targetView.getParent().get+"");
+        Log.d("testa",targetView.getContext()+"");
+
+        View topview = Utility.findChildByPosition((ViewGroup)targetView,x,y);
+        if (topview != null){
+            Log.d("testsss","in the view");
+            MotionEvent motionEvent = MotionEvent.obtain(
+                    time,
+                    time,
+                    MotionEvent.ACTION_MOVE,
+                    x,
+                    y,
+                    metaState
+            );
+            motionEvent.setSource(420);
+            targetView.dispatchTouchEvent(motionEvent);
+            Log.d("testa","null");
+        }else{
+//            release();
+            MotionEvent motionEvent = MotionEvent.obtain(
+                    time,
+                    time,
+                    MotionEvent.ACTION_CANCEL,
+                    x,
+                    y,
+                    metaState
+            );
+            motionEvent.setSource(420);
+            targetView.dispatchTouchEvent(motionEvent);
+            clicked.set(false);
+        }
+//        Log.d("testa",topview.toString()+"");
+//
+//        if(topview.getLeft() < x && topview.getRight()> x && topview.getTop() < y && topview.getBottom() > y){
+//
+//
+//        }else{
+//            Log.d("testsss","outside the view");
+
+
+//        }
+
+
+
+
     }
 
     @Override
@@ -404,15 +444,17 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         Log.d("testsss", "release");
         // Dispatch touch event to view
         targetView.dispatchTouchEvent(motionEvent);
+
     }
 
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN && !clicked.get()) {
-                click();
-                release();
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (!clicked.get()) {
+                    click();
+                }
                 return true;
             }
         }
@@ -442,30 +484,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getSource() == 420) {
             aLog("Bezel", "own source");
-            //return super.onTouchEvent(event);
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.d("testsss", clicked.get() + "");
-
-                Thread loggingThread = new Thread(new Runnable() {
-                    public void run() {
-                        while (clicked.get()) {
-                            Log.d(VIEW_LOG_TAG, "Touching Down");
-
-                            move();
-
-                        }
-                        Log.d(VIEW_LOG_TAG, "Not Touching");
-                    }
-                });
-
-                loggingThread.start();
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                clicked.set(false);
-                Log.d("testsss", "action up");
-            } else {
-                Log.d("testsss", "else");
-                return super.onTouchEvent(event);
-            }
+            return super.onTouchEvent(event);
+//            }
         }
         if (clickingMethod == ClickingMethod.BEZEL_SWIPE) {
             aLog("Bezel", "bezel");
