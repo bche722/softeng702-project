@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener {
+
+
+
 
     //Sensor Fields
     private SensorFusion sensorFusion;
@@ -161,6 +165,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
                 sensorFusion.setMagnet(event.values);
                 break;
         }
+        update();
     }
 
 
@@ -168,6 +173,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                Log.d("testing", "key down");
                 simulateTouchDown();
                 return true;
             }
@@ -179,6 +185,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && keyEvent.getAction() == KeyEvent.ACTION_UP) {
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                Log.d("testing", "key up");
                 simulateTouchUp();
                 return true;
             }
