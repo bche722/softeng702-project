@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener, Clicker {
+public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener {
 
 
 
@@ -141,6 +141,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             mouse.displace(xOffSet,
                     yOffSet);
         }
+
+        if (keyDown) {
+            simulateTouchMove();
+        }
+
+
     }
 
 
@@ -190,10 +196,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         update();
     }
 
-    @Override
-    public void click() {
-        simulateTouchDown();
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
@@ -214,7 +216,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
                     Log.d("testKey", "key down");
                     simulateTouchDown();
-                    keyDown = true;
                     return true;
                 } else {
                     simulateTouchMove();
@@ -234,7 +235,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 Log.d("testKey", "key up");
                 simulateTouchUp();
-                keyDown = false;
                 return true;
             }
         }
@@ -253,6 +253,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
+        keyDown = true;
         downEvent.recycle();
     }
 
@@ -265,6 +266,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
+        keyDown = false;
         downEvent.recycle();
     }
 
@@ -393,6 +395,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         this.refRoll = refRoll;
     }
 
+    public boolean getKeyDown() {
+        return keyDown;
+    }
 
 
 }

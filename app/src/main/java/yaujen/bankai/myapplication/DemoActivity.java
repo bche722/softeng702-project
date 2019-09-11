@@ -2,13 +2,9 @@ package yaujen.bankai.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,15 +12,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
-
 import yaujen.bankai.myapplication.Draw.DrawActivity;
-import yaujen.bankai.pointandclick.Clicker;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class DemoActivity extends AppCompatActivity {
     public enum Tasks { Keyboard, Numpad, Wikipedia , Draw};

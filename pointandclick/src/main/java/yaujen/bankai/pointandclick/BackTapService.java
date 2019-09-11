@@ -9,17 +9,17 @@ import android.os.IBinder;
 import android.os.Messenger;
 
 public class BackTapService {
-    private Clicker clicker;
+    private MouseActivity mouseActivity;
 
     public Handler messageHandler;
     protected ServiceConnection mServerConn;
 
-    public BackTapService(Clicker clicker) {
-        this.clicker = clicker;
+    public BackTapService(MouseActivity mouseActivity) {
+        this.mouseActivity = mouseActivity;
     }
 
     public void startService() {
-        messageHandler = new MessageHandler(clicker);
+        messageHandler = new MessageHandler(mouseActivity);
         mServerConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -38,7 +38,7 @@ public class BackTapService {
         intent.putExtra("MESSENGER", new Messenger(messageHandler));
         intent.setComponent(componentName);
 
-        ComponentName c = ((Activity) clicker).getApplication().startService(intent);
+        ComponentName c = mouseActivity.getApplication().startService(intent);
         if (c == null) {
             System.out.println("Failed to start BoDTapService");
         } else {
@@ -51,6 +51,6 @@ public class BackTapService {
                 "com.prhlt.aemus.BoDTapService.BoDTapService");
         Intent intent = new Intent();
         intent.setComponent(componentName);
-        ((Activity) clicker).getApplication().stopService(intent);
+        mouseActivity.getApplication().stopService(intent);
     }
 }
