@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import yaujen.bankai.myapplication.DemoActivity;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 
@@ -45,6 +46,9 @@ public class DrawActivity extends MouseActivity {
         controlMethod  = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+
+        setClickingMethod(ClickingMethod.valueOf(clickingMethod));
+        setControlMethod(ControlMethod.valueOf(controlMethod));
 
 
 

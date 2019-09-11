@@ -1,5 +1,6 @@
 package yaujen.bankai.pointandclick;
 
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -8,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener {
+public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener, Clicker {
 
 
 
@@ -43,6 +45,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private double refRoll;
 
 
+    private BackTapService backTapService;
 
 
     // Tilt configurations
@@ -52,7 +55,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private final float BEZEL_THRESHHOLD = 50.0f;
 
     private ControlMethod controlMethod = ControlMethod.POSITION_CONTROL;
-    private ClickingMethod clickingMethod = ClickingMethod.VOLUME_DOWN;
+    private ClickingMethod clickingMethod;
 
     private List<Mouse> mice;
     private Mouse mouse;
@@ -81,6 +84,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         refRoll = 0;
 
         keyDown = false;
+
+        backTapService = new BackTapService(this);
+
+
 
         initialiseMice();
 
@@ -156,7 +163,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         mouse = mice.get(0);
 
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
-        mouse.updateLocation(0,0);
+        mouse.updateLocation(initialX,initialY);
     }
 
 
@@ -183,6 +190,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         update();
     }
 
+    @Override
+    public void click() {
+        simulateTouchDown();
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
@@ -295,6 +306,36 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         }
     }
 
+    public ClickingMethod getClickingMethod() {
+        return clickingMethod;
+    }
+
+    public void setClickingMethod(ClickingMethod clickingMethod) {
+        this.clickingMethod = clickingMethod;
+        this.setVisbilityMovableFloatingActionButton(false);
+        backTapService.stopService();
+
+        switch(clickingMethod) {
+            case BACK_TAP:
+                backTapService.startService();
+                break;
+            case BEZEL_SWIPE:
+                break;
+            case VOLUME_DOWN:
+                break;
+            case FLOATING_BUTTON:
+                this.setVisbilityMovableFloatingActionButton(true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setControlMethod(ControlMethod controlMethod) {
+        this.controlMethod = controlMethod;
+    }
+
+
     //pausing the mouse view when activity is paused
     @Override
     protected void onPause() {
@@ -310,11 +351,30 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     }
 
     /**
+     * Convenience method to return the ConstraintLayout.LayoutParams for a wrapped view
+     * @param topMargin
+     * @param rightMargin
+     * @return Customised ConstraintLayout.LayoutParams for a wrapped view
+     */
+    public static ConstraintLayout.LayoutParams getFabConstraintLayoutParams(int topMargin, int rightMargin){
+        ConstraintLayout.LayoutParams fabParams = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT);
+
+        fabParams.rightToRight = rightMargin;
+        fabParams.topToTop = topMargin;
+        return fabParams;
+    }
+
+    /**
      * Calibrate the accelerometer based pointer to consider the current pitch and roll as the reference point, resting position
      */
     public void calibratePointer(){
         setRefPitch(currentPitch);
         setRefRoll(currentRoll);
+        if (controlMethod == ControlMethod.VELOCITY_CONTROL) {
+            mouse.updateLocation(initialX, initialY);
+        }
     }
 
     public double getRefPitch() {
