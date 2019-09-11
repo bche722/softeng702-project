@@ -34,11 +34,6 @@ public class DrawActivity extends MouseActivity {
         setContentView(R.layout.activity_draw);
         constraintLayout = findViewById(R.id.layout);
 
-//        mouseView = new MouseView(this);
-//        mouseView.enableRecalibrationByVolumeUp(true);
-//        constraintLayout.addView(mouseView, -1, MouseView.getFullScreenConstraintLayoutParams());
-//        mouseView.setClickingTargetView(constraintLayout);
-
 
         paintView = (PaintView) findViewById(R.id.paintView);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -51,11 +46,7 @@ public class DrawActivity extends MouseActivity {
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
-//        mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
-//        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
-//        mouseView.setPosTiltGain(tiltGain);
-//        mouseView.setVelTiltGain(tiltGain);
-//        mouseView.enableRecalibrationByVolumeUp(true);
+
 
 
     }

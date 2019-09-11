@@ -26,6 +26,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
 
 
+    private boolean keyDown;
+
     private MovableFloatingActionButton buttonClicker;
 
     //Sensor Fields
@@ -77,6 +79,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         refPitch = 0;
         refRoll = 0;
+
+        keyDown = false;
 
         initialiseMice();
 
@@ -193,12 +197,20 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             return true;
         }
 
-        if (clickingMethod == ClickingMethod.VOLUME_DOWN && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                Log.d("testKey", "key down");
-                simulateTouchDown();
-                return true;
+        if (clickingMethod == ClickingMethod.VOLUME_DOWN) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (!keyDown) {
+
+                    Log.d("testKey", "key down");
+                    simulateTouchDown();
+                    keyDown = true;
+                    return true;
+                } else {
+                    simulateTouchMove();
+                    return true;
+                }
             }
+
         }
 
 
@@ -211,6 +223,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 Log.d("testKey", "key up");
                 simulateTouchUp();
+                keyDown = false;
                 return true;
             }
         }
