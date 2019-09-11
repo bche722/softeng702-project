@@ -102,7 +102,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
 
         initialX = context.getResources().getDisplayMetrics().widthPixels/2;
         initialY = (context.getResources().getDisplayMetrics().heightPixels/2);
-        mouse = new Mouse(context, initialX, initialY);
+//        mouse = new Mouse(context, initialX, initialY);
         refPitch =0;
         refRoll =0;
         positionControl = false;
@@ -183,8 +183,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
-            mouse.update((initialX + xOffSet),
-                    (initialY + yOffSet));
+//            mouse.update((initialX + xOffSet),
+//                    (initialY + yOffSet));
         } else {
             double xOffSet = displacementVEL*Math.sin(tiltDirection);
             double yOffSet = displacementVEL*Math.cos(tiltDirection);
@@ -192,8 +192,8 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
-            mouse.displace(xOffSet,
-                    yOffSet);
+//            mouse.displace(xOffSet,
+//                    yOffSet);
         }
     }
 
@@ -201,11 +201,11 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            canvas.drawBitmap(
-                    mouse.getBitmap(),
-                    (float) mouse.getX(),
-                    (float) mouse.getY(),
-                    paint);
+//            canvas.drawBitmap(
+//                    mouse.getBitmap(),
+//                    (float) mouse.getX(),
+//                    (float) mouse.getY(),
+//                    paint);
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -271,7 +271,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
      * Sets the bitmap of the mouse object
      */
     public void setMouseBitmap(Bitmap newBitmap){
-        mouse.setBitmap(newBitmap);
+//        mouse.setBitmap(newBitmap);
     }
 
     /**
@@ -329,37 +329,37 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         // Obtain MotionEvent object
         long downTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis() + 100;
-        float x = (float)mouse.getX();
-        float y = (float)mouse.getY();
+//        float x = (float)mouse.getX();
+//        float y = (float)mouse.getY();
 
         // List of meta states found here: developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
-        int metaState = 0;
-        MotionEvent motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
-                MotionEvent.ACTION_DOWN,
-                x,
-                y,
-                metaState
-        );
-        motionEvent.setSource(420);
-
-        // Dispatch touch event to view
-        targetView.dispatchTouchEvent(motionEvent);
-
-        metaState = 0;
-        motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
-                MotionEvent.ACTION_UP,
-                x,
-                y,
-                metaState
-        );
-        motionEvent.setSource(420);
-
-        // Dispatch touch event to view
-        targetView.dispatchTouchEvent(motionEvent);
+//        int metaState = 0;
+//        MotionEvent motionEvent = MotionEvent.obtain(
+//                downTime,
+//                eventTime,
+//                MotionEvent.ACTION_DOWN,
+//                x,
+//                y,
+//                metaState
+//        );
+//        motionEvent.setSource(420);
+//
+//        // Dispatch touch event to view
+//        targetView.dispatchTouchEvent(motionEvent);
+//
+//        metaState = 0;
+//        motionEvent = MotionEvent.obtain(
+//                downTime,
+//                eventTime,
+//                MotionEvent.ACTION_UP,
+//                x,
+//                y,
+//                metaState
+//        );
+//        motionEvent.setSource(420);
+//
+//        // Dispatch touch event to view
+//        targetView.dispatchTouchEvent(motionEvent);
     }
 
     @Override

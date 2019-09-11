@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,15 +15,15 @@ import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
-public class KeyboardActivity extends AppCompatActivity {
+public class KeyboardActivity extends MouseActivity {
 
-    private MouseView mouseView;
     private ConstraintLayout constraintLayout;
     private MovableFloatingActionButton movableButtonView;
     private TextView text;
@@ -41,7 +42,7 @@ public class KeyboardActivity extends AppCompatActivity {
     private int tiltGain;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keyboard);
 
@@ -49,16 +50,14 @@ public class KeyboardActivity extends AppCompatActivity {
         constraintLayout = findViewById(R.id.layout);
         nextLetter = findViewById(R.id.nextLetter);
 
-        // How to use mouse view
-        mouseView = new MouseView(this);
-        mouseView.enableRecalibrationByVolumeUp(true);
-        constraintLayout.addView(mouseView, -1, MouseView.getFullScreenConstraintLayoutParams());
-        mouseView.setClickingTargetView(constraintLayout);
 
         // How to add fab clicking
         movableButtonView = new MovableFloatingActionButton(this);
         constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-        mouseView.setMovableFloatingActionButton(movableButtonView);
+        setMovableFloatingActionButton(movableButtonView);
+
+
+
 
          // Set mouse view configuration
         Bundle extras = getIntent().getExtras();
@@ -71,12 +70,7 @@ public class KeyboardActivity extends AppCompatActivity {
         aLog("Wikipedia", clickingMethod);
         aLog("Wikipedia", tiltGain + "");
 
-        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
-        mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
-        mouseView.setPosTiltGain(tiltGain);
-        mouseView.setVelTiltGain(tiltGain);
 
-        mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
 
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +87,7 @@ public class KeyboardActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
     @Override
@@ -104,14 +99,12 @@ public class KeyboardActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mouseView.pause();
     }
 
     //running the mouse view when activity is resumed
     @Override
     protected void onResume() {
         super.onResume();
-        mouseView.resume();
     }
 
     private void colorString() {
@@ -182,4 +175,11 @@ public class KeyboardActivity extends AppCompatActivity {
         aLog("Keyboard", "Task finished: " + correctClicks + "/" + totalClicks);
         startActivity(resultsIntent);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        Log.d("testBck", "back pressed called");
+//        Intent intent = new Intent(this, DemoActivity.class);
+//        startActivity(intent);
+//    }
 }
