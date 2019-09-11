@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ public class KeyboardActivity extends MouseActivity {
         // How to add fab clicking
         movableButtonView = new MovableFloatingActionButton(this);
         constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
+        setMovableFloatingActionButton(movableButtonView);
 
 
          // Set mouse view configuration
@@ -94,14 +96,12 @@ public class KeyboardActivity extends MouseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //mouseView.pause();
     }
 
     //running the mouse view when activity is resumed
     @Override
     protected void onResume() {
         super.onResume();
-        //mouseView.resume();
     }
 
     private void colorString() {
@@ -172,4 +172,11 @@ public class KeyboardActivity extends MouseActivity {
         aLog("Keyboard", "Task finished: " + correctClicks + "/" + totalClicks);
         startActivity(resultsIntent);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        Log.d("testBck", "back pressed called");
+//        Intent intent = new Intent(this, DemoActivity.class);
+//        startActivity(intent);
+//    }
 }

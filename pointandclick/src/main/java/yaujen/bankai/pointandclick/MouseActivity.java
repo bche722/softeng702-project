@@ -8,12 +8,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
 
 
+    private MovableFloatingActionButton buttonClicker;
 
     //Sensor Fields
     private SensorFusion sensorFusion;
@@ -68,6 +72,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         mice = new ArrayList<>();
 
+        refPitch = 0;
+        refRoll = 0;
 
         initialiseMice();
     }
@@ -140,8 +146,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 //        mice.add(smallCrosshair);
 
         mouse = mice.get(0);
-
+        Log.d("testlay", findViewById(android.R.id.content).toString());
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
+        mouse.displace(0,0);
     }
 
 
@@ -171,13 +178,26 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        Log.d("testKey", "keycode " + keyCode);
+        if (keyCode == keyEvent.KEYCODE_BACK) {
+            finish();
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            calibratePointer();
+            Toast.makeText(this,"Calibrated pointer, pitch: "+ getRefPitch() + ", roll: "+getRefRoll(),Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                Log.d("testing", "key down");
+                Log.d("testKey", "key down");
                 simulateTouchDown();
                 return true;
             }
         }
+
+
         return true;
     }
 
@@ -200,6 +220,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public void simulateTouchDown() {
         long upTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis();
+//        Log.d("testlay", findViewById(android.R.id.content).toString());
+
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
@@ -224,9 +246,75 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public void simulateTouchMove() {
         long upTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis();
+
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
         downEvent.recycle();
     }
+
+    /**
+     * The movable button is hidden at the start, so please call the method {@link MouseView#setClickingMethod(ClickingMethod)}
+     * @param mFab
+     */
+    public void setMovableFloatingActionButton(MovableFloatingActionButton mFab){
+        buttonClicker = mFab;
+        buttonClicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                simulateTouchDown();
+            }
+        });
+        this.setVisbilityMovableFloatingActionButton(false);
+    }
+
+    /**
+     * Hides or shows the movable button
+     * @param visible
+     */
+    public void setVisbilityMovableFloatingActionButton(boolean visible){
+        if(buttonClicker != null){
+            buttonClicker.setVisibilityButton(visible);
+        }
+    }
+
+    //pausing the mouse view when activity is paused
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    //running the mouse view when activity is resumed
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerSensorManagerListeners();
+    }
+
+    /**
+     * Calibrate the accelerometer based pointer to consider the current pitch and roll as the reference point, resting position
+     */
+    public void calibratePointer(){
+        setRefPitch(currentPitch);
+        setRefRoll(currentRoll);
+    }
+
+    public double getRefPitch() {
+        return refPitch;
+    }
+
+    public void setRefPitch(double refPitch) {
+        this.refPitch = refPitch;
+    }
+
+    public double getRefRoll() {
+        return refRoll;
+    }
+
+    public void setRefRoll(double refRoll) {
+        this.refRoll = refRoll;
+    }
+
+
 }
