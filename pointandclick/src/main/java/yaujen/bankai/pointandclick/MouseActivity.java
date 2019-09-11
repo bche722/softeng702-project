@@ -40,6 +40,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private double currentRoll;
     private double refRoll;
 
+
+
+
     // Tilt configurations
     private int posTiltGain = 35; // step size of position tilt
     private int velTiltGain = 100;
@@ -76,6 +79,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         refRoll = 0;
 
         initialiseMice();
+
     }
 
     private void registerSensorManagerListeners() {
@@ -114,8 +118,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
-            mouse.displace((initialX + xOffSet),
-                    (initialY + yOffSet));
+            mouse.updateLocation(initialX + xOffSet,
+                    initialY + yOffSet);
         } else {
             int xOffSet = (int) (displacementVEL*Math.sin(tiltDirection));
             int yOffSet = (int) (displacementVEL*Math.cos(tiltDirection));
@@ -146,9 +150,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 //        mice.add(smallCrosshair);
 
         mouse = mice.get(0);
-        Log.d("testlay", findViewById(android.R.id.content).toString());
+
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
-        mouse.displace(0,0);
+        mouse.updateLocation(0,0);
     }
 
 
@@ -205,7 +209,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
         if (clickingMethod == ClickingMethod.VOLUME_DOWN && keyEvent.getAction() == KeyEvent.ACTION_UP) {
             if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                Log.d("testing", "key up");
+                Log.d("testKey", "key up");
                 simulateTouchUp();
                 return true;
             }
@@ -315,6 +319,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public void setRefRoll(double refRoll) {
         this.refRoll = refRoll;
     }
+
 
 
 }

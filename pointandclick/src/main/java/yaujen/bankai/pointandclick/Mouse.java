@@ -26,8 +26,8 @@ public class Mouse {
 
     public Mouse(Drawable icon, int initialX, int initialY, int width, int height){
         _icon = icon;
-        _x = 0;
-        _y = 0;
+        _x = initialX;
+        _y = initialY;
         xDims = initialX*2;
         yDims = initialY*2;
         this.width = width;
@@ -42,16 +42,18 @@ public class Mouse {
         return _y;
     }
 
-    public void displaceFromZero() {}
 
 
-    public void displace(int xVal, int yVal){
-
-        Log.d("testMouse", "x coord: " + xVal + " y coord: " + yVal);
-        updateLocation(_x+xVal,_y+yVal);
+    public void displace(int x, int y) {
+        x += _x;
+        y += _y;
+        updateLocation(x,y);
     }
 
-    private void updateLocation(int x, int y) {
+
+
+    public void updateLocation(int x, int y) {
+
         if (x < 0) {
             x = 0;
         } else if (x > xDims-10) {
@@ -63,8 +65,10 @@ public class Mouse {
             y = yDims-10;
         }
 
-//        Log.d("testMouse", "x coord: " + x + " y coord: " + y);
+        Log.d("testMouse", "x coord: " + x + " y coord: " + y);
 
+        _x = x;
+        _y = y;
 
         Rect bounds = _icon.copyBounds();
         bounds.left = x;

@@ -57,6 +57,7 @@ public class DrawActivity extends MouseActivity {
 //        mouseView.setVelTiltGain(tiltGain);
 //        mouseView.enableRecalibrationByVolumeUp(true);
 
+
     }
 
 
@@ -64,14 +65,12 @@ public class DrawActivity extends MouseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mouseView.pause();
     }
 
     //running the mouse view when activity is resumed
     @Override
     protected void onResume() {
         super.onResume();
-        mouseView.resume();
     }
 
     @Override

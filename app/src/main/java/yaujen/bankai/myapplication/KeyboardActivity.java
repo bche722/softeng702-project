@@ -57,6 +57,8 @@ public class KeyboardActivity extends MouseActivity {
         setMovableFloatingActionButton(movableButtonView);
 
 
+
+
          // Set mouse view configuration
         Bundle extras = getIntent().getExtras();
         controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
@@ -84,6 +86,7 @@ public class KeyboardActivity extends MouseActivity {
                 }
             }
         });
+
 
     }
 
