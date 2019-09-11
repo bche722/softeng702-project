@@ -15,6 +15,7 @@ import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
@@ -53,8 +54,10 @@ public class KeyboardActivity extends MouseActivity {
 
         // How to add fab clicking
         movableButtonView = new MovableFloatingActionButton(this);
-        constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
+        constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
         setMovableFloatingActionButton(movableButtonView);
+
+
 
 
 
@@ -64,6 +67,10 @@ public class KeyboardActivity extends MouseActivity {
         controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+
+
+        setClickingMethod(ClickingMethod.valueOf(clickingMethod));
+        setControlMethod(ControlMethod.valueOf(controlMethod));
 
 
         aLog("Wikipedia", controlMethod);

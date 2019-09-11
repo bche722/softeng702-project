@@ -108,7 +108,7 @@ public class MouseView extends SurfaceView implements Runnable, SensorEventListe
         positionControl = false;
         recalibrationEnabled = false;
 
-        backTapService = new BackTapService((Activity)getContext(), this);
+        //backTapService = new BackTapService((Activity)getContext(), this);
         clickingMethod = ClickingMethod.VOLUME_DOWN;
 
         setFocusableInTouchMode(true);

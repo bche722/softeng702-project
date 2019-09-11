@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
@@ -56,6 +57,9 @@ public class NumpadActivity extends MouseActivity {
         controlMethod  = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+
+        setClickingMethod(ClickingMethod.valueOf(clickingMethod));
+        setControlMethod(ControlMethod.valueOf(controlMethod));
 
     }
 
