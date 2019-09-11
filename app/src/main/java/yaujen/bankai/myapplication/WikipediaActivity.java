@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.Mouse;
+import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
@@ -32,8 +34,7 @@ import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
-public class WikipediaActivity extends AppCompatActivity {
-    private MouseView mouseView;
+public class WikipediaActivity extends MouseActivity {
     private ConstraintLayout constraintLayout;
     private TextView linksLeft;
     private TextView bodyText;
@@ -54,21 +55,16 @@ public class WikipediaActivity extends AppCompatActivity {
     private Intent resultsIntent;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wikipedia);
         constraintLayout = findViewById(R.id.layout);
 
 
-        // How to use mouse view
-        mouseView = new MouseView(this);
-        constraintLayout.addView(mouseView, -1, MouseView.getFullScreenConstraintLayoutParams());
-        mouseView.setClickingTargetView(findViewById(R.id.clickableLayout));
-
         // How to add fab clicking
         movableButtonView = new MovableFloatingActionButton(this);
         constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-        mouseView.setMovableFloatingActionButton(movableButtonView);
+        setMovableFloatingActionButton(movableButtonView);
 
 
         // Set mouse view configuration
@@ -82,11 +78,7 @@ public class WikipediaActivity extends AppCompatActivity {
         aLog("Wikipedia", clickingMethod);
         aLog("Wikipedia", tiltGain + "");
 
-        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
-        mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
-        mouseView.setPosTiltGain(tiltGain);
-        mouseView.setVelTiltGain(tiltGain);
-        mouseView.enableRecalibrationByVolumeUp(true);
+
 
         linksLeft = findViewById(R.id.links);
 
@@ -215,13 +207,11 @@ public class WikipediaActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mouseView.pause();
     }
 
     //running the mouse view when activity is resumed
     @Override
     protected void onResume() {
         super.onResume();
-        mouseView.resume();
     }
 }

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
+import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 import yaujen.bankai.pointandclick.Utility;
@@ -19,10 +20,10 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
-public class NumpadActivity extends AppCompatActivity {
-    private MouseView mouseView;
+public class NumpadActivity extends MouseActivity {
     private TextView numberField;
     private ConstraintLayout constraintLayout;
+    private MovableFloatingActionButton movableButtonView;
 
     private String numberToEnter = "7586423109";
     private int errorCount = 0;
@@ -38,22 +39,17 @@ public class NumpadActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_numpad);
         constraintLayout = findViewById(R.id.layout);
         numberField = findViewById(R.id.numField);
 
-        // How to use mouse view
-        mouseView = new MouseView(this);
-        constraintLayout.addView(mouseView, -1, MouseView.getFullScreenConstraintLayoutParams());
-        mouseView.setClickingTargetView(findViewById(R.id.layout));
-
 
         // How to add fab clicking
-        MovableFloatingActionButton movableButtonView = new MovableFloatingActionButton(this);
+        movableButtonView = new MovableFloatingActionButton(this);
         constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-        mouseView.setMovableFloatingActionButton(movableButtonView);
+        setMovableFloatingActionButton(movableButtonView);
 
         // Set mouse view configuration
         Bundle extras = getIntent().getExtras();
@@ -61,11 +57,6 @@ public class NumpadActivity extends AppCompatActivity {
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
-        mouseView.setClickingMethod(ClickingMethod.valueOf(clickingMethod));
-        mouseView.enablePositionControl(controlMethod.equals(DemoActivity.CONTROL_METHODS[0]));
-        mouseView.setPosTiltGain(tiltGain);
-        mouseView.setVelTiltGain(tiltGain);
-        mouseView.enableRecalibrationByVolumeUp(true);
     }
 
 
@@ -73,14 +64,12 @@ public class NumpadActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mouseView.pause();
     }
 
     //running the mouse view when activity is resumed
     @Override
     protected void onResume() {
         super.onResume();
-        mouseView.resume();
     }
 
     public void onStartClicku(View view){
