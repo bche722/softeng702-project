@@ -75,6 +75,7 @@ public class WikipediaActivity extends MouseActivity {
 
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
+        setTiltGain(tiltGain);
 
 
         aLog("Wikipedia", controlMethod);

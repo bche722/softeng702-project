@@ -59,6 +59,7 @@ public class NumpadActivity extends MouseActivity {
 
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
+        setTiltGain(tiltGain);
 
     }
 

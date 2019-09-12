@@ -92,8 +92,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         backTapService = new BackTapService(this);
 
-        findViewById(android.R.id.content).setOnTouchListener(this);
-
 
 
         initialiseMice();
@@ -314,6 +312,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             }
         });
         this.setVisbilityMovableFloatingActionButton(false);
+    }
+
+
+    public void setTiltGain(int tiltGain) {
+        velTiltGain = tiltGain;
+        posTiltGain = tiltGain;
     }
 
 //    @Override
