@@ -12,6 +12,7 @@ import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
+import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
@@ -40,6 +41,11 @@ public class DrawActivity extends MouseActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
+
+        // How to add fab clicking
+        buttonClicker = new MovableFloatingActionButton(this);
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        setMovableFloatingActionButton(buttonClicker);
 
         // Set mouse view configuration
         Bundle extras = getIntent().getExtras();

@@ -1,7 +1,9 @@
 package yaujen.bankai.pointandclick;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,13 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static yaujen.bankai.pointandclick.Utility.aLog;
+
 public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener {
 
 
 
     private boolean keyDown;
 
-    private MovableFloatingActionButton buttonClicker;
+    protected MovableFloatingActionButton buttonClicker;
 
     //Sensor Fields
     private SensorFusion sensorFusion;
@@ -86,6 +91,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         keyDown = false;
 
         backTapService = new BackTapService(this);
+
+        findViewById(android.R.id.content).setOnTouchListener(this);
 
 
 
@@ -223,6 +230,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
                 }
             }
 
+        } else if (clickingMethod == ClickingMethod.BACK_TAP) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+
+            }
         }
 
 
@@ -250,9 +261,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long eventTime = SystemClock.uptimeMillis();
 //        Log.d("testlay", findViewById(android.R.id.content).toString());
 
+
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
+
+        downEvent.setSource(420);
         keyDown = true;
         downEvent.recycle();
     }
@@ -266,6 +280,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
+
+        downEvent.setSource(420);
         keyDown = false;
         downEvent.recycle();
     }
@@ -280,6 +296,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         MotionEvent downEvent = MotionEvent.
                 obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
+        downEvent.setSource(420);
+
         downEvent.recycle();
     }
 
@@ -297,6 +315,57 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         });
         this.setVisbilityMovableFloatingActionButton(false);
     }
+
+//    @Override
+//    public boolean onTouch(View view, MotionEvent event) {
+//        Log.d("testEdge", clickingMethod.toString());
+//        if (event.getSource() == 420) {
+//            Log.d("Bezel", "own source");
+//            return super.onTouchEvent(event);
+//        }
+//
+//        if (clickingMethod == ClickingMethod.BEZEL_SWIPE) {
+//            Log.d("Bezel", "bezel");
+//            Log.d("Bezel", event.getX() + " " + event.getY());
+//            Log.d("Bezel", MotionEvent.actionToString(event.getAction()));
+//
+//            WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+//            Point size = new Point();
+//            Display display = wm.getDefaultDisplay();
+//            display.getSize(size);
+//            int width = size.x;
+//
+//            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                if (event.getX() < BEZEL_THRESHHOLD) {
+//                    Log.d("Bezel", "Touched left");
+//                    simulateTouchDown();
+//                    return true;
+//                } else if (event.getX() > width - BEZEL_THRESHHOLD) {
+//                    Log.d("Bezel", "Touched right");
+//                    simulateTouchDown();
+//                    return true;
+//                }   else {
+//                    Log.d("Bezel", "Didn't touch bezel");
+//                    return false;
+//                }
+//            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+//                if (event.getX() < BEZEL_THRESHHOLD) {
+//                    Log.d("Bezel", "Release left");
+//                    simulateTouchUp();
+//                    return true;
+//                } else if (event.getX() > width - BEZEL_THRESHHOLD) {
+//                    Log.d("Bezel", "Release right");
+//                    simulateTouchUp();
+//                    return true;
+//                }   else {
+//                    Log.d("Bezel", "Didn't touch bezel");
+//                    return false;
+//                }
+//            }
+//
+//        }
+//        return false;
+//    }
 
     /**
      * Hides or shows the movable button

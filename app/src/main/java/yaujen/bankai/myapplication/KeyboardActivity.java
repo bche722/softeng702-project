@@ -26,7 +26,6 @@ import static yaujen.bankai.pointandclick.Utility.aLog;
 public class KeyboardActivity extends MouseActivity {
 
     private ConstraintLayout constraintLayout;
-    private MovableFloatingActionButton movableButtonView;
     private TextView text;
     private TextView nextLetter;
     private String originalString = "the quick brown fox jumped over the lazy dog";
@@ -53,9 +52,9 @@ public class KeyboardActivity extends MouseActivity {
 
 
         // How to add fab clicking
-        movableButtonView = new MovableFloatingActionButton(this);
-        constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
-        setMovableFloatingActionButton(movableButtonView);
+        buttonClicker = new MovableFloatingActionButton(this);
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        setMovableFloatingActionButton(buttonClicker);
 
 
 

@@ -24,7 +24,6 @@ import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 public class NumpadActivity extends MouseActivity {
     private TextView numberField;
     private ConstraintLayout constraintLayout;
-    private MovableFloatingActionButton movableButtonView;
 
     private String numberToEnter = "7586423109";
     private int errorCount = 0;
@@ -48,9 +47,9 @@ public class NumpadActivity extends MouseActivity {
 
 
         // How to add fab clicking
-        movableButtonView = new MovableFloatingActionButton(this);
-        constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-        setMovableFloatingActionButton(movableButtonView);
+        buttonClicker = new MovableFloatingActionButton(this);
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        setMovableFloatingActionButton(buttonClicker);
 
         // Set mouse view configuration
         Bundle extras = getIntent().getExtras();

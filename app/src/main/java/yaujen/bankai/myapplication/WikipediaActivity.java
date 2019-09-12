@@ -40,7 +40,6 @@ public class WikipediaActivity extends MouseActivity {
     private TextView linksLeft;
     private TextView bodyText;
 
-    private MovableFloatingActionButton movableButtonView;
     private Button startButton;
 
     private List<String> links;
@@ -63,9 +62,9 @@ public class WikipediaActivity extends MouseActivity {
 
 
         // How to add fab clicking
-        movableButtonView = new MovableFloatingActionButton(this);
-        constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-        setMovableFloatingActionButton(movableButtonView);
+        buttonClicker = new MovableFloatingActionButton(this);
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        setMovableFloatingActionButton(buttonClicker);
 
 
         // Set mouse view configuration
