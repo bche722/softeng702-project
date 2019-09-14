@@ -21,10 +21,10 @@
                 android:layout_height="wrap_content"
                 android:maxHeight="2656dp"
                 android:minHeight="3754dp"
-                android:scaleType="center"
+                android:scaleType="fitXY"
                 android:scrollbarAlwaysDrawHorizontalTrack="true"
                 android:scrollbarAlwaysDrawVerticalTrack="true"
-                app:srcCompat="@drawable/p1" />
+                app:srcCompat="@drawable/flowchart" />
         </LinearLayout>
     </ScrollView>
 
