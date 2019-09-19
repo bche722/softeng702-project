@@ -26,6 +26,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
@@ -49,6 +51,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private double currentRoll;
     private double refRoll;
 
+    private CustomizedQueue xOffsetQueue;
+    private CustomizedQueue yOffsetQueue;
 
     private BackTapService backTapService;
 
@@ -88,6 +92,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         refPitch = 0;
         refRoll = 0;
 
+        xOffsetQueue = new CustomizedQueue (50);
+        yOffsetQueue = new CustomizedQueue (50);
+
         keyDown = false;
 
         backTapService = new BackTapService(this);
@@ -116,6 +123,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private void update() {
         currentRoll = sensorFusion.getRoll();
         double roll =  currentRoll - refRoll; // rotation along x-axis
+
         currentPitch = sensorFusion.getPitch();
         double pitch =  currentPitch - refPitch; // rotation along y-axis
 
@@ -129,10 +137,16 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         if(controlMethod == ControlMethod.POSITION_CONTROL){
             int xOffSet = (int) (displacementPOS*Math.sin(tiltDirection));
+            xOffsetQueue.add ( xOffSet ) ;
+            xOffSet = CustomizedQueue.getAverage ( xOffsetQueue );
+            Log.d ( "xOffsetAverageTest", xOffsetQueue.toString ());
+
             int yOffSet = (int) (displacementPOS*Math.cos(tiltDirection));
             if(pitch > 0){
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
+            yOffsetQueue.add ( yOffSet );
+            yOffSet = CustomizedQueue.getAverage ( yOffsetQueue );
 
             mouse.updateLocation(initialX + xOffSet,
                     initialY + yOffSet);
