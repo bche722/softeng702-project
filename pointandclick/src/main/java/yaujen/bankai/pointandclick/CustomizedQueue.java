@@ -1,9 +1,6 @@
 package yaujen.bankai.pointandclick;
 
-import android.util.Log;
-
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 public class CustomizedQueue extends LinkedList < Integer > {
     private int size;
@@ -15,7 +12,6 @@ public class CustomizedQueue extends LinkedList < Integer > {
 
     @Override
     public boolean add ( Integer o ) {
-        Log.d ( "testfilter", o.toString () );
         this.addLast ( o );
         if ( this.size ( ) > this.size ) {
             this.removeFirst ();
@@ -23,20 +19,12 @@ public class CustomizedQueue extends LinkedList < Integer > {
         return true;
     }
 
-    public static int getAverage ( CustomizedQueue queue) {
+    public int getAverage ( ) {
         int average = 0;
-        for ( Integer value : queue ) {
+        for ( Integer value : this ) {
             average += value;
         }
-        return average / queue.size ( );
-    }
-
-    public String toString(){
-        String string = "";
-        for ( Integer value : this ) {
-            string += value + " ";
-        }
-        return string;
+        return average / this.size ( );
     }
 
 }

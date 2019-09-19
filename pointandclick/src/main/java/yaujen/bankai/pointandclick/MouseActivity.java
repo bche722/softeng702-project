@@ -138,7 +138,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         if(controlMethod == ControlMethod.POSITION_CONTROL){
             int xOffSet = (int) (displacementPOS*Math.sin(tiltDirection));
             xOffsetQueue.add ( xOffSet ) ;
-            xOffSet = CustomizedQueue.getAverage ( xOffsetQueue );
+            xOffSet = xOffsetQueue.getAverage ();
             Log.d ( "xOffsetAverageTest", xOffsetQueue.toString ());
 
             int yOffSet = (int) (displacementPOS*Math.cos(tiltDirection));
@@ -146,7 +146,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
             yOffsetQueue.add ( yOffSet );
-            yOffSet = CustomizedQueue.getAverage ( yOffsetQueue );
+            yOffSet = yOffsetQueue.getAverage();
 
             mouse.updateLocation(initialX + xOffSet,
                     initialY + yOffSet);
