@@ -17,13 +17,13 @@ import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 
 public class DemoActivity extends AppCompatActivity {
-    public enum Tasks { Keyboard, Numpad, Wikipedia , Draw};
+    public enum Tasks { Keyboard, Numpad, Wikipedia , Draw, RandomBtn, BigImage};
 
     // Dropdown Options
     public static final String[] CONTROL_METHODS = new String[]{ControlMethod.POSITION_CONTROL.name(), ControlMethod.VELOCITY_CONTROL.name()};
     public static final String[] TILT_GAINS = new String[]{"10","15","20","25","30","35","40","45","50","55","60","65","70","75","80","85","90","95","100","105","110","115","120","125","130","135","140","145","150","160","170","180","190","200","225","250","275","300","325","350","375","400"};
     public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(),ClickingMethod.FLOATING_BUTTON.name(),ClickingMethod.BACK_TAP.name(),ClickingMethod.BEZEL_SWIPE.name() };
-    public static final String[] TASKS = new String[]{Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), Tasks.Draw.name()};
+    public static final String[] TASKS = new String[]{Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), Tasks.Draw.name(), Tasks.RandomBtn.name(), Tasks.BigImage.name()};
 
     // KEY 
     public static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
@@ -87,6 +87,10 @@ public class DemoActivity extends AppCompatActivity {
                     myIntent = new Intent(DemoActivity.this, WikipediaActivity.class);
                 }else if(task.equals(Tasks.Draw.name())){
                     myIntent = new Intent(DemoActivity.this, DrawActivity.class);
+                }else if(task.equals(Tasks.RandomBtn.name())){
+                    myIntent = new Intent(DemoActivity.this, RandomBtnActivity.class);
+                }else if(task.equals(Tasks.BigImage.name())){
+                    myIntent = new Intent(DemoActivity.this, BigimageActivity.class);
                 }
 
                 if(myIntent != null) {

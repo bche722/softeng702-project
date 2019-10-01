@@ -26,6 +26,12 @@
         <activity android:name=".Draw.DrawActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name=".RandomBtnActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".BigimageActivity"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".NumpadActivity"
             android:screenOrientation="portrait"
             >
