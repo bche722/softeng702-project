@@ -32,6 +32,9 @@
         <activity android:name=".BigimageActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name=".CalculatorActivity"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".NumpadActivity"
             android:screenOrientation="portrait"
             >
