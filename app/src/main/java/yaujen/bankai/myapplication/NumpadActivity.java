@@ -1,12 +1,18 @@
 package yaujen.bankai.myapplication;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.HashMap;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
@@ -33,9 +39,11 @@ public class NumpadActivity extends MouseActivity {
     private long startTime = 0;
 
 
-    String controlMethod ;
+    String controlMethod;
     String clickingMethod;
     int tiltGain;
+
+    private HashMap<String, Integer> keyboard_map = new HashMap<>();
 
 
     @Override
@@ -48,18 +56,20 @@ public class NumpadActivity extends MouseActivity {
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
-        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(), getFabConstraintLayoutParams(100, 0));
         setMovableFloatingActionButton(buttonClicker);
 
         // Set mouse view configuration
         Bundle extras = getIntent().getExtras();
-        controlMethod  = extras.getString(KEY_NAME_CONTROL_METHOD);
+        controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
+
+        setup_keyboard_map();
 
     }
 
@@ -76,28 +86,30 @@ public class NumpadActivity extends MouseActivity {
         super.onResume();
     }
 
-    public void onStartClicku(View view){
-        if(start){
+    public void onStartClicku(View view) {
+        if (start) {
             start = false;
             numberField.setText(" • • • • • • • • • •");
-            findViewById(R.id.goBtn).setVisibility(View.INVISIBLE);
+            findViewById(R.id.StartBtn).setVisibility(View.INVISIBLE);
             startTime = System.currentTimeMillis();
+            change_keyboard_colour(numberToEnter.substring(0, 1), ButtonClickTime.NextClick);
+
         } else {
             incrementErrorCount();
         }
     }
 
-    public void onFinishClicku(View view){
-        if(finish){
+    public void onFinish() {
+        if (finish) {
             long timeTaken = System.currentTimeMillis() - startTime;
-            Utility.aLog("Time taken",timeTaken+"");
+            Utility.aLog("Time taken", timeTaken + "");
 
             Intent intent = new Intent(this, ResultsActivity.class);
             intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
             intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
             intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
-            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
             intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
 
             startActivity(intent);
@@ -106,37 +118,81 @@ public class NumpadActivity extends MouseActivity {
         }
     }
 
-    public void onClicku(View view){
-        if(!start && !finish){
-            if(!numberToEnter.equals("")){
-                char clickuChar = ((Button)view).getText().charAt(0);
-                Utility.aLog("Key clicked",clickuChar+"");
-                if(numberToEnter.charAt(0) == clickuChar){
-                    if(numberToEnter.length() != 1){
-                        numberField.setText(numberField.getText().toString().replaceFirst(" •",clickuChar+""));
+    public void onClicku(View view) {
+        if (!start && !finish) {
+            if (!numberToEnter.equals("")) {
+                char clickuChar = ((Button) view).getText().charAt(0);
+                Utility.aLog("Key clicked", clickuChar + "");
+                if (numberToEnter.charAt(0) == clickuChar) {
+                    change_keyboard_colour(numberToEnter.substring(0, 1), ButtonClickTime.CurrentClick);
+                    if (numberToEnter.length() != 1) {
+                        numberField.setText(numberField.getText().toString().replaceFirst(" •", clickuChar + ""));
                         numberToEnter = numberToEnter.substring(1);
+                        change_keyboard_colour(numberToEnter.substring(0, 1), ButtonClickTime.NextClick);
                     } else {
-                        numberField.setText(numberField.getText().toString().replaceFirst(" •",clickuChar+""));
+                        numberField.setText(numberField.getText().toString().replaceFirst(" •", clickuChar + ""));
                         finish = true;
-                        findViewById(R.id.endBtn).setVisibility(View.VISIBLE);
+                        onFinish();
                     }
                 } else {
                     incrementErrorCount();
                 }
             }
-        } else if (finish){
+        } else if (finish) {
             incrementErrorCount();
         }
     }
 
-    public void onBadClicku(View view){
+    public void onBadClicku(View view) {
         incrementErrorCount();
     }
 
-    private void incrementErrorCount(){
-        if(!start){
+    private void incrementErrorCount() {
+        if (!start) {
             errorCount++;
-            Utility.aLog("Err count",errorCount+"");
+            Utility.aLog("Err count", errorCount + "");
         }
     }
+
+    private void setup_keyboard_map() {
+        keyboard_map.put("0", new Integer(R.id.btn0));
+        keyboard_map.put("1", new Integer(R.id.btn1));
+        keyboard_map.put("2", new Integer(R.id.btn2));
+        keyboard_map.put("3", new Integer(R.id.btn3));
+        keyboard_map.put("4", new Integer(R.id.btn4));
+        keyboard_map.put("5", new Integer(R.id.btn5));
+        keyboard_map.put("6", new Integer(R.id.btn6));
+        keyboard_map.put("7", new Integer(R.id.btn7));
+        keyboard_map.put("8", new Integer(R.id.btn8));
+        keyboard_map.put("9", new Integer(R.id.btn9));
+
+
+        for (String s : keyboard_map.keySet()) {
+            Button button = findViewById(keyboard_map.get(s));
+            Drawable unwrappedDrawable = button.getBackground();
+            Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+            DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#D7D7D7"));
+
+
+        }
+    }
+
+    private void change_keyboard_colour(String s, ButtonClickTime b) {
+
+        Button button = findViewById(keyboard_map.get(s));
+        if (b == ButtonClickTime.CurrentClick) {
+            Drawable unwrappedDrawable = button.getBackground();
+            Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+            DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#D7D7D7"));
+
+        } else {
+            Log.d("testingButtonText", s);
+            Drawable unwrappedDrawable = button.getBackground();
+            Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+            DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#84D2FC"));
+
+        }
+
+    }
+
 }

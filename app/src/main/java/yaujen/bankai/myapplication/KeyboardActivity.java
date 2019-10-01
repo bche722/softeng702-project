@@ -34,9 +34,6 @@ import static yaujen.bankai.pointandclick.Utility.aLog;
 
 public class KeyboardActivity extends MouseActivity {
 
-    enum ButtonClickTime {
-        CurrentClick, NextClick
-    }
 
     private ConstraintLayout constraintLayout;
     private TextView text;
