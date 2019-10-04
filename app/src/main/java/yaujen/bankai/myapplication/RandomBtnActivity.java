@@ -3,12 +3,11 @@ package yaujen.bankai.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.Random;
 
+import yaujen.bankai.myapplication.TestTasks.ResultsActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
@@ -18,8 +17,8 @@ import yaujen.bankai.pointandclick.Utility;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 public class RandomBtnActivity extends MouseActivity {
 

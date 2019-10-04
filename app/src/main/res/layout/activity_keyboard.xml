@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:onClick="onBackClicku"
-    tools:context=".KeyboardActivity">
+    tools:context=".TestTasks.KeyboardActivity">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/alpha"

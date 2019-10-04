@@ -1,9 +1,7 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spannable;
@@ -23,18 +21,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
-import yaujen.bankai.pointandclick.Mouse;
 import yaujen.bankai.pointandclick.MouseActivity;
-import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
 public class WikipediaModifiedActivity extends MouseActivity {

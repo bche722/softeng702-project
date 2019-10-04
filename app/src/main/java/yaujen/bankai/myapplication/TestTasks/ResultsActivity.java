@@ -1,10 +1,13 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import yaujen.bankai.myapplication.DemoActivity;
+import yaujen.bankai.myapplication.R;
 
 public class ResultsActivity extends AppCompatActivity {
 
@@ -32,7 +35,7 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
     public void onFinishClicked(View view){
-        Intent intent = new Intent(this, DemoActivity.class);
+        Intent intent = new Intent(this, NextActivity.class);
         startActivity(intent);
         finishAffinity();
     }
