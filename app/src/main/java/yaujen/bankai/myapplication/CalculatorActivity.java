@@ -180,6 +180,8 @@ public class CalculatorActivity extends MouseActivity {
 
     }
 
+    public void onBadClicku(View v) {}
+
 }
 
 
