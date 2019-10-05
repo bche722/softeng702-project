@@ -12,6 +12,7 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
+import yaujen.bankai.myapplication.AppUtility;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
@@ -39,6 +40,10 @@ public class KeyboardActivity extends MouseActivity {
     private String clickingMethod;
     private int tiltGain;
 
+
+    private AppUtility singleton;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +53,7 @@ public class KeyboardActivity extends MouseActivity {
         constraintLayout = findViewById(R.id.layout);
         nextLetter = findViewById(R.id.nextLetter);
 
+        singleton = AppUtility.getInstance();
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
@@ -150,11 +156,13 @@ public class KeyboardActivity extends MouseActivity {
 
             nextLetter.setText("Next Letter: " + nextChar);
 
-            if (textToWrite.length() == 0) {
+            long timeTaken = System.currentTimeMillis() - startTime;
+
+            if (textToWrite.length() == 0 || timeTaken > singleton.getTestTime()) {
                 nextLetter.setText("Done!");
                 startButton.setVisibility(View.VISIBLE);
                 startButton.setText("View results");
-                long timeTaken = System.currentTimeMillis() - startTime;
+
 
                 resultsIntent = new Intent(this, ResultsActivity.class);
                 resultsIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);

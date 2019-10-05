@@ -2,6 +2,7 @@ package yaujen.bankai.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -12,15 +13,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import yaujen.bankai.myapplication.Draw.DrawActivity;
-import yaujen.bankai.myapplication.TestTasks.KeyboardActivity;
-import yaujen.bankai.myapplication.TestTasks.NumpadActivity;
-import yaujen.bankai.myapplication.TestTasks.WikipediaActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 
 public class DemoActivity extends AppCompatActivity {
     public enum Tasks { Keyboard, Numpad, Wikipedia , Draw, RandomBtn, BigImage};
+
 
     // Dropdown Options
     public static final String[] CONTROL_METHODS = new String[]{ControlMethod.POSITION_CONTROL.name(), ControlMethod.VELOCITY_CONTROL.name()};
@@ -33,7 +33,8 @@ public class DemoActivity extends AppCompatActivity {
     public static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
     public static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
 
-    private Utility singleton;
+    private AppUtility singleton;
+    private boolean timing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,11 @@ public class DemoActivity extends AppCompatActivity {
         toolbar.setTitle("Accel World");
         setSupportActionBar(toolbar);
 
-        singleton = Utility.getInstance();
+        singleton = AppUtility.getInstance();
+
+
+
+
 
         // Dropdown
         Spinner dropdownControlMethod = findViewById(R.id.control_method);
@@ -66,52 +71,39 @@ public class DemoActivity extends AppCompatActivity {
         dropdownControlMethod.setOnItemSelectedListener(new ChangeSelectedTiltGainBasedOnControlMethod());
         dropdownClickingMethod.setOnItemSelectedListener(new BacktapWarningMessage());
 
+        Button experiment = findViewById(R.id.experiment);
+        experiment.setVisibility(View.INVISIBLE);
 
         Button startButton = findViewById(R.id.button_start);
+
+        if (getIntent().hasExtra("TIME_DONE")) {
+            Bundle extras = getIntent().getExtras();
+            if (extras.getBoolean("TIME_DONE")) {
+                startButton.setVisibility(View.INVISIBLE);
+                experiment.setVisibility(View.VISIBLE)
+                ;
+
+            }
+        }
+
+
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Spinner dropdownControlMethod = findViewById(R.id.control_method);
-                Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
-                Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
-                Spinner dropdownTask = findViewById(R.id.task);
-
-                String controlMethod = dropdownControlMethod.getSelectedItem().toString();
-                String tiltGain = dropdownTiltGain.getSelectedItem().toString();
-                String clickingMethod = dropdownClickingMethod.getSelectedItem().toString();
-                String task = dropdownTask.getSelectedItem().toString();
-
-                // String message = "You chose: "+controlMethod+", "+tiltGain+", "+clickingMethod+", "+task;
-                // DemoActivity.this.outputMessage(message);
-
-                // SWITCHING TO DIFFERENT APP
-                Intent myIntent = null;
-
-                if(task.equals(Tasks.Draw.name())){
-                    myIntent = new Intent(DemoActivity.this, DrawActivity.class);
-                }else if(task.equals(Tasks.RandomBtn.name())){
-                    myIntent = new Intent(DemoActivity.this, RandomBtnActivity.class);
-                }else if(task.equals(Tasks.BigImage.name())){
-                    myIntent = new Intent(DemoActivity.this, BigimageActivity.class);
+                if (!timing) {
+                    timing = true;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onTimingDone();
+                        }
+                    }, singleton.getPlayTime());
                 }
-
-                if(myIntent != null) {
-                    myIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
-                    myIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
-                    myIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
-                    try {
-                        DemoActivity.this.startActivity(myIntent);
-
-                    } catch (Exception e){
-                        DemoActivity.this.outputMessage(e.getMessage());
-                    }
-                } else {
-                    DemoActivity.this.outputMessage("Intent is null!");
-                }
+                onStartButton();
             }
         });
 
 
-        Button experiment = findViewById(R.id.experiment);
+
         experiment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,6 +163,53 @@ public class DemoActivity extends AppCompatActivity {
 
         public void onNothingSelected(AdapterView parent) {
             // Do nothing.
+        }
+    }
+
+    private void onTimingDone() {
+        Intent intent = new Intent(this, DemoActivity.class);
+        intent.putExtra("TIME_DONE", true);
+        startActivity(intent);
+    }
+
+
+    private void onStartButton() {
+        Spinner dropdownControlMethod = findViewById(R.id.control_method);
+        Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
+        Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
+        Spinner dropdownTask = findViewById(R.id.task);
+
+        String controlMethod = dropdownControlMethod.getSelectedItem().toString();
+        String tiltGain = dropdownTiltGain.getSelectedItem().toString();
+        String clickingMethod = dropdownClickingMethod.getSelectedItem().toString();
+        String task = dropdownTask.getSelectedItem().toString();
+
+        // String message = "You chose: "+controlMethod+", "+tiltGain+", "+clickingMethod+", "+task;
+        // DemoActivity.this.outputMessage(message);
+
+        // SWITCHING TO DIFFERENT APP
+        Intent myIntent = null;
+
+        if(task.equals(Tasks.Draw.name())){
+            myIntent = new Intent(DemoActivity.this, DrawActivity.class);
+        }else if(task.equals(Tasks.RandomBtn.name())){
+            myIntent = new Intent(DemoActivity.this, RandomBtnActivity.class);
+        }else if(task.equals(Tasks.BigImage.name())){
+            myIntent = new Intent(DemoActivity.this, BigimageActivity.class);
+        }
+
+        if(myIntent != null) {
+            myIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
+            myIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+            myIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+            try {
+                DemoActivity.this.startActivity(myIntent);
+
+            } catch (Exception e){
+                DemoActivity.this.outputMessage(e.getMessage());
+            }
+        } else {
+            DemoActivity.this.outputMessage("Intent is null!");
         }
     }
 

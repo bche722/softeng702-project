@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import yaujen.bankai.myapplication.AppUtility;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.myapplication.TestTasks.ResultsActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
@@ -51,6 +52,8 @@ public class WikipediaActivity extends MouseActivity {
     private String clickingMethod;
     private int tiltGain;
 
+    private AppUtility singleton;
+
     private Intent resultsIntent;
 
     @Override
@@ -59,6 +62,7 @@ public class WikipediaActivity extends MouseActivity {
         setContentView(R.layout.activity_wikipedia);
         constraintLayout = findViewById(R.id.layout);
 
+        singleton = AppUtility.getInstance();
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
@@ -108,8 +112,8 @@ public class WikipediaActivity extends MouseActivity {
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     updateText();
-                } else if (taskFinished()){
-                    goToResults();
+                } else if (taskFinished() || (System.currentTimeMillis() - startTime) > singleton.getTestTime()){
+                     goToResults();
                 }
             }
         });

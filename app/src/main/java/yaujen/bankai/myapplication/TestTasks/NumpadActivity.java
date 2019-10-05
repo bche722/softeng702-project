@@ -7,12 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import yaujen.bankai.myapplication.AppUtility;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 import yaujen.bankai.pointandclick.Utility;
+
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
@@ -36,6 +38,8 @@ public class NumpadActivity extends MouseActivity {
     String clickingMethod;
     int tiltGain;
 
+    private AppUtility singleton;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class NumpadActivity extends MouseActivity {
         setContentView(R.layout.activity_numpad);
         constraintLayout = findViewById(R.id.layout);
         numberField = findViewById(R.id.numField);
+
+        singleton = AppUtility.getInstance();
 
 
         // How to add fab clicking
@@ -87,8 +93,11 @@ public class NumpadActivity extends MouseActivity {
     }
 
     public void onFinishClicku(View view){
-        if(finish){
-            long timeTaken = System.currentTimeMillis() - startTime;
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+
+
+        if(finish || timeTaken > singleton.getTestTime()){
             Utility.aLog("Time taken",timeTaken+"");
 
             Intent intent = new Intent(this, ResultsActivity.class);

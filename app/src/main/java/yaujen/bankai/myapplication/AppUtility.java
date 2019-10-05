@@ -7,12 +7,12 @@ import yaujen.bankai.myapplication.TestTasks.KeyboardActivity;
 import yaujen.bankai.myapplication.TestTasks.NumpadActivity;
 import yaujen.bankai.myapplication.TestTasks.WikipediaActivity;
 
-public class Utility {
+public class AppUtility {
 
-    private static Utility _singleton = null; // Singleton Instance
+    private static AppUtility _singleton = null; // Singleton Instance
 
-    private final static int PLAY_TIME = 300000;
-    private final static int TEST_TIME = 120000;
+    private final static int PLAY_TIME = 15000;
+    private final static int TEST_TIME = 15000;
 
 
     private String controlMethod;
@@ -25,7 +25,7 @@ public class Utility {
 
 
 
-    private Utility() {
+    private AppUtility() {
         tasks = new ArrayList<>();
         tasks.add(KeyboardActivity.class);
         tasks.add(NumpadActivity.class);
@@ -33,19 +33,19 @@ public class Utility {
         Collections.shuffle(tasks);
     }
 
-    public static Utility getInstance() {
+    public static AppUtility getInstance() {
         if (_singleton == null) {
-            _singleton = new Utility();
+            _singleton = new AppUtility();
         }
         return _singleton;
     }
 
 
-    public static int getPlayTime() {
+    public int getPlayTime() {
         return PLAY_TIME;
     }
 
-    public static int getTestTime() {
+    public int getTestTime() {
         return TEST_TIME;
     }
 
