@@ -17,28 +17,50 @@
 
 
     <TextView
-        android:id="@+id/Answer"
-        android:layout_width="438dp"
-        android:layout_height="321dp"
+        android:id="@+id/input"
+        android:layout_width="0dp"
+        android:layout_height="105dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="0.77"
         android:background="#0CFF5E07"
         android:textColor="@color/colorAccent"
         android:textSize="36sp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="7dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/output"
+        android:layout_width="0dp"
+        android:layout_height="105dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="100dp"
+        android:layout_weight="0.77"
+        android:background="#0CFF5E07"
+        android:textColor="@color/colorAccent"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/alpha"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input"
+        tools:ignore="MissingConstraints" />
 
     <LinearLayout
         android:id="@+id/alpha"
-        android:layout_width="413dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@android:color/background_light"
         android:onClick="onBadClicku"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Answer">
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,18 +70,21 @@
                 android:id="@+id/btn1"
                 android:layout_width="wrap_content"
                 android:layout_height="63dp"
+                android:onClick="onClickNum"
                 android:text="1" />
 
             <Button
                 android:id="@+id/btn2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="2" />
 
             <Button
                 android:id="@+id/btn3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="3" />
 
             <Button
@@ -79,18 +104,21 @@
                 android:id="@+id/btn4"
                 android:layout_width="wrap_content"
                 android:layout_height="63dp"
+                android:onClick="onClickNum"
                 android:text="4" />
 
             <Button
                 android:id="@+id/btn5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="5" />
 
             <Button
                 android:id="@+id/btn6"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="6" />
 
             <Button
@@ -110,18 +138,21 @@
                 android:id="@+id/btn7"
                 android:layout_width="wrap_content"
                 android:layout_height="63dp"
+                android:onClick="onClickNum"
                 android:text="7" />
 
             <Button
                 android:id="@+id/btn8"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="8" />
 
             <Button
                 android:id="@+id/btn9"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickNum"
                 android:text="9" />
 
             <Button
@@ -141,12 +172,14 @@
                 android:id="@+id/btn0"
                 android:layout_width="wrap_content"
                 android:layout_height="63dp"
+                android:onClick="onClickNum"
                 android:text="0" />
 
             <Button
                 android:id="@+id/btndot"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:onClick="onClickPt"
                 android:text="." />
 
             <Button
