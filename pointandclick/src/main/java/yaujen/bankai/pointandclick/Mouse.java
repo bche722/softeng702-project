@@ -6,12 +6,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
+
+import java.io.Serializable;
 
 /**
  * Mouse object to keep track of and update the coordinates of the on screen pointer
  */
-public class Mouse {
+public class Mouse implements Serializable{
     private Drawable _icon;
 
 
@@ -33,6 +37,16 @@ public class Mouse {
         this.width = width;
         this.height = height;
     }
+
+//    public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetX, int offsetY){
+//        _icon = icon;
+//        _x = initialX + offsetX;
+//        _y = initialY+ offsetY;
+//        xDims = initialX*2;
+//        yDims = initialY*2;
+//        this.width = width;
+//        this.height = height;
+//    }
 
     public int get_x() {
         return _x;
@@ -83,6 +97,15 @@ public class Mouse {
         return _icon;
     }
 
+    public void setIcon(Drawable _icon) {
+        this._icon = _icon;
+    }
 
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
+    public void setHeight(int height) {
+        this.height = height;
+    }
 }

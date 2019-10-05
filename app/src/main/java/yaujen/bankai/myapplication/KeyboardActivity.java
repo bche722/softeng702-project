@@ -1,6 +1,7 @@
 package yaujen.bankai.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,12 +20,16 @@ import java.util.HashMap;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
+import yaujen.bankai.pointandclick.Mouse;
 import yaujen.bankai.pointandclick.MouseActivity;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
@@ -51,6 +56,7 @@ public class KeyboardActivity extends MouseActivity {
     private String clickingMethod;
     private int tiltGain;
 
+
     private HashMap<String, Integer> keyboard_map = new HashMap<>();
 
 
@@ -76,6 +82,15 @@ public class KeyboardActivity extends MouseActivity {
         controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+        Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
+        mouseWidth = extras.getInt(KEY_NAME_CURSOR_W);
+        mouseHeight = extras.getInt(KEY_NAME_CURSOR_H);
+
+
+//        Bundle bundle = (Bundle) extras.get(KEY_NAME_CURSOR);
+//        Mouse mouse = (Mouse) bundle.getSerializable(KEY_NAME_CURSOR);
+        setupMouse(mouseBitmap);
+
 
 
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
