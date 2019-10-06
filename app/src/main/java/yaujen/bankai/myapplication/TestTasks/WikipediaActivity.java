@@ -1,6 +1,7 @@
 package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,6 +11,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -103,17 +105,27 @@ public class WikipediaActivity extends MouseActivity {
 
         createWikipediaText();
 
+
+
         hasStarted = false;
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Handler timer = new Handler();
                 if (!hasStarted) {
+                    timer.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            goToNext();
+                        }
+                    }, singleton.getTestTime());
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     updateText();
                 } else if (taskFinished() || (System.currentTimeMillis() - startTime) > singleton.getTestTime()){
-                     goToResults();
+                    timer.removeCallbacksAndMessages(null);
+                    goToNext();
                 }
             }
         });
@@ -189,7 +201,7 @@ public class WikipediaActivity extends MouseActivity {
             long timeTaken = System.currentTimeMillis() - startTime;
 
             linksLeft.setText((Html.fromHtml("<b>Done!</b>")));
-            startButton.setText("View results");
+            startButton.setText("Continue");
 
             resultsIntent = new Intent(this, ResultsActivity.class);
             resultsIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
@@ -199,6 +211,16 @@ public class WikipediaActivity extends MouseActivity {
             resultsIntent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
             resultsIntent.putExtra(KEY_NAME_ERR_COUNT, totalClicks - correctClicks);
         }
+    }
+
+    private void goToNext() {
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "WIKI: "+timeTaken);
+        singleton.setErrorCountWIKI(totalClicks-correctClicks);
+        singleton.incTimeTaken(timeTaken);
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
     }
 
     private void goToResults() {

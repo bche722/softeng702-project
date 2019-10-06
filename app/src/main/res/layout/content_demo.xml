@@ -167,4 +167,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/button_start" />
 
+    <Switch
+        android:id="@+id/experimentSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Run Experiment"
+        android:theme="@style/AppTheme"
+        android:thumbTint="@color/colorPrimary"
+        android:trackTint="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/experiment" />
+
 </android.support.constraint.ConstraintLayout>

@@ -18,6 +18,8 @@ public class NextActivity extends AppCompatActivity {
     public static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
     public static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
     public static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
+    public static final String KEY_NAME_TIME_TAKEN = "TIME_TAKEN";
+    public static final String KEY_NAME_ERR_COUNT = "ERR_COUNT";
 
     Button next;
     TextView textView;
@@ -40,8 +42,7 @@ public class NextActivity extends AppCompatActivity {
         textView = findViewById(R.id.nextText);
 
         if (nextTask == null) {
-            next.setVisibility(View.INVISIBLE);
-            textView.setText("Finished!");
+            goToResults();
         }
 
         next.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +70,12 @@ public class NextActivity extends AppCompatActivity {
         } else {
 
         }
+    }
+
+    private void goToResults() {
+        Intent intent = new Intent(this, ResultsActivity.class);
+        startActivity(intent);
+
     }
 
 }

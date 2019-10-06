@@ -1,8 +1,10 @@
 package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -85,15 +87,23 @@ public class KeyboardActivity extends MouseActivity {
 
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
+            Handler timer = new Handler();
             @Override
             public void onClick(View view) {
                 if (!hasStarted) {
+                    timer.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            goToNext();
+                        }
+                    }, singleton.getTestTime());
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     colorString();
                     startButton.setVisibility(View.INVISIBLE);
                 } else if (textToWrite.length() == 0){
-                    goToResults();
+                    timer.removeCallbacksAndMessages(null);
+                    goToNext();
                 }
             }
         });
@@ -158,10 +168,10 @@ public class KeyboardActivity extends MouseActivity {
 
             long timeTaken = System.currentTimeMillis() - startTime;
 
-            if (textToWrite.length() == 0 || timeTaken > singleton.getTestTime()) {
+            if (textToWrite.length() == 0) {
                 nextLetter.setText("Done!");
                 startButton.setVisibility(View.VISIBLE);
-                startButton.setText("View results");
+                startButton.setText("Continue");
 
 
                 resultsIntent = new Intent(this, ResultsActivity.class);
@@ -187,6 +197,15 @@ public class KeyboardActivity extends MouseActivity {
     private void goToResults() {
         aLog("Keyboard", "Task finished: " + correctClicks + "/" + totalClicks);
         startActivity(resultsIntent);
+    }
+
+    private void goToNext() {
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "KEY: "+timeTaken);
+        singleton.setErrorCountKEY(totalClicks - correctClicks);
+        singleton.incTimeTaken(timeTaken);
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
     }
 
 //    @Override

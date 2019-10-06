@@ -2,19 +2,21 @@ package yaujen.bankai.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import yaujen.bankai.myapplication.Draw.DrawActivity;
+import yaujen.bankai.myapplication.TestTasks.RandomBtnActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 
@@ -26,15 +28,18 @@ public class DemoActivity extends AppCompatActivity {
     public static final String[] CONTROL_METHODS = new String[]{ControlMethod.POSITION_CONTROL.name(), ControlMethod.VELOCITY_CONTROL.name()};
     public static final String[] TILT_GAINS = new String[]{"10","15","20","25","30","35","40","45","50","55","60","65","70","75","80","85","90","95","100","105","110","115","120","125","130","135","140","145","150","160","170","180","190","200","225","250","275","300","325","350","375","400"};
     public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(),ClickingMethod.FLOATING_BUTTON.name(),ClickingMethod.BACK_TAP.name(),ClickingMethod.BEZEL_SWIPE.name() };
-    public static final String[] TASKS = new String[]{/*Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), */Tasks.Draw.name(), Tasks.RandomBtn.name(), Tasks.BigImage.name()};
+    public static final String[] TASKS = new String[]{/*Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), */Tasks.Draw.name(), /*Tasks.RandomBtn.name(), */Tasks.BigImage.name()};
 
     // KEY 
     public static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
     public static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
     public static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
 
+    Button experiment;
+    Button startButton;
+    Switch experimentSwitch;
+
     private AppUtility singleton;
-    private boolean timing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,34 +76,27 @@ public class DemoActivity extends AppCompatActivity {
         dropdownControlMethod.setOnItemSelectedListener(new ChangeSelectedTiltGainBasedOnControlMethod());
         dropdownClickingMethod.setOnItemSelectedListener(new BacktapWarningMessage());
 
-        Button experiment = findViewById(R.id.experiment);
+        experiment = findViewById(R.id.experiment);
         experiment.setVisibility(View.INVISIBLE);
 
-        Button startButton = findViewById(R.id.button_start);
+        startButton = findViewById(R.id.button_start);
 
-        if (getIntent().hasExtra("TIME_DONE")) {
-            Bundle extras = getIntent().getExtras();
-            if (extras.getBoolean("TIME_DONE")) {
-                startButton.setVisibility(View.INVISIBLE);
-                experiment.setVisibility(View.VISIBLE)
-                ;
+        experimentSwitch = findViewById(R.id.experimentSwitch);
 
+
+        experimentSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                experimentSwitch();
             }
-        }
+        });
+
+
 
 
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (!timing) {
-                    timing = true;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onTimingDone();
-                        }
-                    }, singleton.getPlayTime());
-                }
-                onStartButton();
+                    onStartButton();
             }
         });
 
@@ -166,10 +164,23 @@ public class DemoActivity extends AppCompatActivity {
         }
     }
 
-    private void onTimingDone() {
-        Intent intent = new Intent(this, DemoActivity.class);
-        intent.putExtra("TIME_DONE", true);
-        startActivity(intent);
+
+    private void experimentSwitch() {
+        TextView taskText = findViewById(R.id.text_task);
+        Spinner task = findViewById(R.id.task);
+        if(experimentSwitch.isChecked()) {
+
+
+            taskText.setVisibility(View.INVISIBLE);
+            task.setVisibility(View.INVISIBLE);
+            startButton.setVisibility(View.INVISIBLE);
+            experiment.setVisibility(View.VISIBLE);
+        } else {
+            task.setVisibility(View.VISIBLE);
+            taskText.setVisibility(View.VISIBLE);
+            startButton.setVisibility(View.VISIBLE);
+            experiment.setVisibility(View.INVISIBLE);
+        }
     }
 
 

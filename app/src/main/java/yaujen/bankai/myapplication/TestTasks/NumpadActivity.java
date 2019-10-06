@@ -2,7 +2,9 @@ package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,6 +34,8 @@ public class NumpadActivity extends MouseActivity {
     private boolean start = true;
     private boolean finish = false;
     private long startTime = 0;
+
+    private Handler timer;
 
 
     String controlMethod ;
@@ -82,6 +86,13 @@ public class NumpadActivity extends MouseActivity {
     }
 
     public void onStartClicku(View view){
+        timer = new Handler();
+        timer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                goToNext();
+            }
+        }, singleton.getTestTime());
         if(start){
             start = false;
             numberField.setText(" • • • • • • • • • •");
@@ -97,18 +108,20 @@ public class NumpadActivity extends MouseActivity {
         long timeTaken = System.currentTimeMillis() - startTime;
 
 
-        if(finish || timeTaken > singleton.getTestTime()){
+        if(finish){
+            timer.removeCallbacksAndMessages(null);
+
             Utility.aLog("Time taken",timeTaken+"");
-
-            Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
-            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
-            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
-
-            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
-            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
-
-            startActivity(intent);
+            goToNext();
+//            Intent intent = new Intent(this, ResultsActivity.class);
+//            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
+//            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+//            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+//
+//            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+//            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
+//
+//            startActivity(intent);
         } else {
             incrementErrorCount();
         }
@@ -146,5 +159,14 @@ public class NumpadActivity extends MouseActivity {
             errorCount++;
             Utility.aLog("Err count",errorCount+"");
         }
+    }
+
+    private void goToNext() {
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "NUM: "+timeTaken);
+        singleton.incTimeTaken(timeTaken);
+        singleton.setErrorCountNUM(errorCount);
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
     }
 }

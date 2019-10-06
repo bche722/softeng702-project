@@ -29,7 +29,7 @@
             android:name=".Draw.DrawActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RandomBtnActivity"
+            android:name=".TestTasks.RandomBtnActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".BigimageActivity"
