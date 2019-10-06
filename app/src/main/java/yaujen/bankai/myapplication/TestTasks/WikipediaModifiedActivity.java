@@ -1,14 +1,13 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
@@ -22,26 +21,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
-import yaujen.bankai.pointandclick.Mouse;
 import yaujen.bankai.pointandclick.MouseActivity;
-import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
-public class WikipediaActivity extends MouseActivity {
+public class WikipediaModifiedActivity extends MouseActivity {
     private ConstraintLayout constraintLayout;
     private TextView linksLeft;
     private TextView bodyText;
@@ -69,7 +62,7 @@ public class WikipediaActivity extends MouseActivity {
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
-        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(), getFabConstraintLayoutParams(100, 0));
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
         setMovableFloatingActionButton(buttonClicker);
 
 
@@ -83,9 +76,11 @@ public class WikipediaActivity extends MouseActivity {
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
 
-        Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
-        setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
-                extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
+
+        aLog("Wikipedia", controlMethod);
+        aLog("Wikipedia", clickingMethod);
+        aLog("Wikipedia", tiltGain + "");
+
 
 
         linksLeft = findViewById(R.id.links);
@@ -113,7 +108,7 @@ public class WikipediaActivity extends MouseActivity {
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     updateText();
-                } else if (taskFinished()) {
+                } else if (taskFinished()){
                     goToResults();
                 }
             }
@@ -126,7 +121,7 @@ public class WikipediaActivity extends MouseActivity {
         String text = "hello";
         try {
             byte[] buffer = new byte[is.available()];
-            while (is.read(buffer) != -1) ;
+            while (is.read(buffer) != -1);
             text = new String(buffer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -141,8 +136,12 @@ public class WikipediaActivity extends MouseActivity {
         URLSpan[] urlSpans = spanned.getSpans(0, spanned.length(), URLSpan.class);
 
         // Adds a click listener to every url
-        for (final URLSpan urlSpan : urlSpans) {
+        for (final URLSpan urlSpan: urlSpans) {
+            TextPaint p = new TextPaint();
+            p.setTextSize(20);
+
             final String url = urlSpan.getURL();
+            urlSpan.updateDrawState(p);
 
             // Only add links we want to the task
             if (!url.equals("-1")) {
@@ -197,7 +196,7 @@ public class WikipediaActivity extends MouseActivity {
             resultsIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
             resultsIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
-            resultsIntent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
+            resultsIntent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
             resultsIntent.putExtra(KEY_NAME_ERR_COUNT, totalClicks - correctClicks);
         }
     }

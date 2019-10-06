@@ -1,4 +1,4 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,8 @@ import android.graphics.drawable.PaintDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
@@ -26,14 +28,15 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
+import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.Mouse;
 import yaujen.bankai.pointandclick.MouseActivity;
-import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 
@@ -60,6 +63,7 @@ public class KeyboardActivity extends MouseActivity {
 
 
     private HashMap<String, Integer> keyboard_map = new HashMap<>();
+    private AppUtility singleton;
 
 
     @Override
@@ -72,6 +76,7 @@ public class KeyboardActivity extends MouseActivity {
         nextLetter = findViewById(R.id.nextLetter);
         nextLetter.setVisibility(View.INVISIBLE);
 
+        singleton = AppUtility.getInstance();
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
@@ -99,17 +104,25 @@ public class KeyboardActivity extends MouseActivity {
 
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
+            Handler timer = new Handler();
             @Override
             public void onClick(View view) {
                 if (!hasStarted) {
+                    timer.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            goToNext();
+                        }
+                    }, singleton.getTestTime());
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     nextLetter.setVisibility(View.VISIBLE);
                     change_keyboard_colour("t", ButtonClickTime.NextClick);
                     colorString();
                     startButton.setVisibility(View.INVISIBLE);
-                } else if (textToWrite.length() == 0) {
-                    goToResults();
+                } else if (textToWrite.length() == 0){
+                    timer.removeCallbacksAndMessages(null);
+                    goToNext();
                 }
             }
         });
@@ -183,11 +196,13 @@ public class KeyboardActivity extends MouseActivity {
 
             nextLetter.setText("Next Letter: " + nextChar);
 
+            long timeTaken = System.currentTimeMillis() - startTime;
+
             if (textToWrite.length() == 0) {
                 nextLetter.setText("Done!");
                 startButton.setVisibility(View.VISIBLE);
-                startButton.setText("View results");
-                long timeTaken = System.currentTimeMillis() - startTime;
+                startButton.setText("Continue");
+
 
                 resultsIntent = new Intent(this, ResultsActivity.class);
                 resultsIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
@@ -212,6 +227,15 @@ public class KeyboardActivity extends MouseActivity {
     private void goToResults() {
         aLog("Keyboard", "Task finished: " + correctClicks + "/" + totalClicks);
         startActivity(resultsIntent);
+    }
+
+    private void goToNext() {
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "KEY: "+timeTaken);
+        singleton.setErrorCountKEY(totalClicks - correctClicks);
+        singleton.incTimeTaken(timeTaken);
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
     }
 
 //    @Override

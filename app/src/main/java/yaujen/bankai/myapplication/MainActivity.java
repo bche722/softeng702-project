@@ -9,8 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import yaujen.bankai.myapplication.TestTasks.WikipediaActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
-import yaujen.bankai.pointandclick.Mouse;
 import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 

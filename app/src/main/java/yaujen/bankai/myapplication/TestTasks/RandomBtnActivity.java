@@ -1,15 +1,18 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.Random;
 
+import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.myapplication.R;
+import yaujen.bankai.myapplication.TestTasks.ResultsActivity;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
@@ -24,8 +27,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 public class RandomBtnActivity extends MouseActivity {
 
@@ -35,11 +38,14 @@ public class RandomBtnActivity extends MouseActivity {
     String clickingMethod;
     int tiltGain;
 
+    private AppUtility singleton;
+
     private boolean start = true;
     private boolean finish = false;
     private long startTime = 0;
 
     private int errorCount = 0;
+    private Handler timer;
 
     private Random randomNum;
 
@@ -72,6 +78,7 @@ public class RandomBtnActivity extends MouseActivity {
         setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
                 extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
 
+        singleton = AppUtility.getInstance();
 
         findViewById(R.id.randomBtn).setVisibility(View.INVISIBLE);
 
@@ -107,8 +114,15 @@ public class RandomBtnActivity extends MouseActivity {
     }
 
 
-    public void onStartClicku(View view) {
-        if (start) {
+    public void onStartClicku(View view){
+        if(start){
+            timer = new Handler();
+            timer.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    goToNext();
+                }
+            }, singleton.getTestTime());
             start = false;
             findViewById(R.id.startBtn).setVisibility(View.INVISIBLE);
             findViewById(R.id.randomBtn).setVisibility(View.VISIBLE);
@@ -127,18 +141,17 @@ public class RandomBtnActivity extends MouseActivity {
 
             if (count == 10) {
                 finish = true;
-                long timeTaken = System.currentTimeMillis() - startTime;
-                Utility.aLog("Time taken", timeTaken + "");
-
-                Intent intent = new Intent(this, ResultsActivity.class);
-                intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
-                intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
-                intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
-
-                intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
-                intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
-
-                startActivity(intent);
+                timer.removeCallbacksAndMessages(null);
+                goToNext();
+//                Intent intent = new Intent(this, ResultsActivity.class);
+//                intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
+//                intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+//                intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+//
+//                intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+//                intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
+//
+//                startActivity(intent);
             }
 
         } else if (finish) {
@@ -163,20 +176,31 @@ public class RandomBtnActivity extends MouseActivity {
     public void onFinishClicku(View view) {
         if (finish) {
             long timeTaken = System.currentTimeMillis() - startTime;
-            Utility.aLog("Time taken", timeTaken + "");
+            Utility.aLog("Time taken",timeTaken+"");
+            timer.removeCallbacksAndMessages(null);
+            goToNext();
 
-            Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
-            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
-            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+//            Intent intent = new Intent(this, ResultsActivity.class);
+//            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
+//            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+//            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+//
+//            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+//            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
 
-            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
-            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
-
-            startActivity(intent);
+//            startActivity(intent);
         } else {
             incrementErrorCount();
         }
+    }
+    private void goToNext() {
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "RAND: "+timeTaken);
+        singleton.setErrorCountRAND(errorCount);
+        singleton.incTimeTaken(timeTaken);
+
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
     }
 
 }

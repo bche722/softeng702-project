@@ -1,10 +1,11 @@
-package yaujen.bankai.myapplication;
+package yaujen.bankai.myapplication.TestTasks;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +16,14 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
+import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
-import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 import yaujen.bankai.pointandclick.Utility;
+
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
@@ -30,8 +33,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
-import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
+import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 public class NumpadActivity extends MouseActivity {
     private TextView numberField;
@@ -44,12 +47,15 @@ public class NumpadActivity extends MouseActivity {
     private boolean finish = false;
     private long startTime = 0;
 
+    private Handler timer;
+
 
     String controlMethod;
     String clickingMethod;
     int tiltGain;
 
     private HashMap<String, Integer> keyboard_map = new HashMap<>();
+    private AppUtility singleton;
 
 
     @Override
@@ -58,6 +64,8 @@ public class NumpadActivity extends MouseActivity {
         setContentView(R.layout.activity_numpad);
         constraintLayout = findViewById(R.id.layout);
         numberField = findViewById(R.id.numField);
+
+        singleton = AppUtility.getInstance();
 
 
         // How to add fab clicking
@@ -97,8 +105,15 @@ public class NumpadActivity extends MouseActivity {
         super.onResume();
     }
 
-    public void onStartClicku(View view) {
-        if (start) {
+    public void onStartClicku(View view){
+        timer = new Handler();
+        timer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                goToNext();
+            }
+        }, singleton.getTestTime());
+        if(start){
             start = false;
             numberField.setText(" • • • • • • • • • •");
             findViewById(R.id.StartBtn).setVisibility(View.INVISIBLE);
@@ -110,20 +125,25 @@ public class NumpadActivity extends MouseActivity {
         }
     }
 
-    public void onFinish() {
-        if (finish) {
-            long timeTaken = System.currentTimeMillis() - startTime;
-            Utility.aLog("Time taken", timeTaken + "");
+    public void onFinishClicku(View view){
 
-            Intent intent = new Intent(this, ResultsActivity.class);
-            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
-            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
-            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+        long timeTaken = System.currentTimeMillis() - startTime;
 
-            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
-            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
 
-            startActivity(intent);
+        if(finish){
+            timer.removeCallbacksAndMessages(null);
+
+            Utility.aLog("Time taken",timeTaken+"");
+            goToNext();
+//            Intent intent = new Intent(this, ResultsActivity.class);
+//            intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
+//            intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+//            intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+//
+//            intent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+//            intent.putExtra(KEY_NAME_ERR_COUNT, errorCount);
+//
+//            startActivity(intent);
         } else {
             incrementErrorCount();
         }
@@ -206,4 +226,12 @@ public class NumpadActivity extends MouseActivity {
 
     }
 
+    private void goToNext() {
+        long timeTaken = System.currentTimeMillis() - startTime;
+        Log.d("testexp", "NUM: "+timeTaken);
+        singleton.incTimeTaken(timeTaken);
+        singleton.setErrorCountNUM(errorCount);
+        Intent intent = new Intent(this, NextActivity.class);
+        startActivity(intent);
+    }
 }
