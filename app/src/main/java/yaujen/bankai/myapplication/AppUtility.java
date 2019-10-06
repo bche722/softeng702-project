@@ -20,6 +20,8 @@ public class AppUtility {
     private String controlMethod;
     private String tiltGain;
     private String clickingMethod;
+    private String smooth;
+    private String delay;
 
 
 
@@ -70,10 +72,12 @@ public class AppUtility {
         return null;
     }
 
-    public void setExtras(String ctrlM, String clikM, String tiltG) {
+    public void setExtras(String ctrlM, String clikM, String tiltG, String smooth, String delay) {
         controlMethod = ctrlM;
         clickingMethod = clikM;
         tiltGain = tiltG;
+        this.smooth = smooth;
+        this.delay = delay;
     }
 
     public String getControlMethod() {
@@ -131,6 +135,14 @@ public class AppUtility {
 
     public int getTotalErrorCount() {
         return errorCountKEY+errorCountRAND+errorCountWIKI+errorCountNUM;
+    }
+
+    public String getSmooth() {
+        return smooth;
+    }
+
+    public String getDelay() {
+        return delay;
     }
 
 }

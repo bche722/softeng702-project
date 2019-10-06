@@ -65,6 +65,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     // Tilt configurations
     private int posTiltGain = 35; // step size of position tilt
     private int velTiltGain = 100;
+
+
+    private int delay = 1;
+    private int smooth =1;
     private final double SAMPLING_RATE = 0.02;
     private final float BEZEL_THRESHHOLD = 50.0f;
 
@@ -108,8 +112,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         Log.d("testInit", refPitch + " xxxx " + refRoll);
 
-        xOffsetQueue = new CustomizedQueue (50);
-        yOffsetQueue = new CustomizedQueue (50);
+        xOffsetQueue = new CustomizedQueue (smooth);
+        yOffsetQueue = new CustomizedQueue (smooth);
 
         keyDown = false;
 
@@ -192,7 +196,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         mouseHeight = 60;
         mouseOffsetX = 0;
         mouseOffsetY = 0;
-        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY);
+        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY,delay);
 //        Mouse smallArrow = new Mouse(drawableArrow, getRealWidth(STANDARD_CURSOR_WIDTH / 2), getRealHeight(STANDARD_CURSOR_WIDTH / 2), 0, 0);
 //        Mouse crosshair = new Mouse(drawableCrosshair, getRealWidth(60), getRealHeight(60), getRealWidth(30), getRealHeight(30));
 //        Mouse smallCrosshair = new Mouse(drawableCrosshair, getRealWidth(30), getRealHeight(30), getRealWidth(15), getRealHeight(15));
@@ -534,5 +538,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         return keyDown;
     }
 
+    public void setSmooth(int smooth) {
+        this.xOffsetQueue.setSize(smooth);
+        this.yOffsetQueue.setSize(smooth);
+    }
 
+    public void setDelay(int delay) {
+        this.mouse.setSize(delay);
+    }
 }

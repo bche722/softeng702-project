@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import yaujen.bankai.myapplication.AppUtility;
@@ -33,6 +35,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
@@ -41,7 +45,8 @@ public class NumpadActivity extends MouseActivity {
     private TextView numberField;
     private ConstraintLayout constraintLayout;
 
-    private String numberToEnter = "7586423109";
+    private ArrayList<Character> numList;
+    private String numberToEnter = "";
     private int errorCount = 0;
 
     private boolean start = true;
@@ -68,6 +73,11 @@ public class NumpadActivity extends MouseActivity {
 
         singleton = AppUtility.getInstance();
 
+        initAndShuffle();
+
+        TextView number = findViewById(R.id.query);
+        number.setText("Enter " + numberToEnter);
+
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
@@ -80,9 +90,16 @@ public class NumpadActivity extends MouseActivity {
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
+
+        int smooth = Integer.parseInt(extras.getString(KEY_NAME_SMOOTH));
+        int delay = Integer.parseInt(extras.getString(KEY_NAME_DELAY));
+
+        setSmooth(smooth);
+        setDelay(delay);
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
+
 
         Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
         setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
@@ -91,6 +108,24 @@ public class NumpadActivity extends MouseActivity {
         setup_keyboard_map();
 
 
+    }
+
+    private void initAndShuffle() {
+        numList = new ArrayList<>();
+        numList.add('0');
+        numList.add('1');
+        numList.add('2');
+        numList.add('3');
+        numList.add('4');
+        numList.add('5');
+        numList.add('6');
+        numList.add('7');
+        numList.add('8');
+        numList.add('9');
+        Collections.shuffle(numList);
+        for (char c : numList) {
+            numberToEnter = numberToEnter + c;
+        }
     }
 
 

@@ -40,7 +40,6 @@
             />
         <activity 
             android:name=".TestTasks.NumpadActivity"
-            android:screenOrientation="portrait"
             />
         <activity android:name=".CalculatorActivity"
             android:screenOrientation="portrait"

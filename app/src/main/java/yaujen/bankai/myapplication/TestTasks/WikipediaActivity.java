@@ -38,6 +38,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
@@ -84,6 +86,12 @@ public class WikipediaActivity extends MouseActivity {
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
+
+        int smooth = Integer.parseInt(extras.getString(KEY_NAME_SMOOTH));
+        int delay = Integer.parseInt(extras.getString(KEY_NAME_DELAY));
+
+        setSmooth(smooth);
+        setDelay(delay);
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);

@@ -14,6 +14,8 @@ import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 
 public class CalculatorActivity extends MouseActivity {
@@ -52,6 +54,16 @@ public class CalculatorActivity extends MouseActivity {
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
 
 
+        setClickingMethod(ClickingMethod.valueOf(clickingMethod));
+        setControlMethod(ControlMethod.valueOf(controlMethod));
+        setTiltGain(tiltGain);
+
+
+        int smooth = Integer.parseInt(extras.getString(KEY_NAME_SMOOTH));
+        int delay = Integer.parseInt(extras.getString(KEY_NAME_DELAY));
+
+        setSmooth(smooth);
+        setDelay(delay);
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);

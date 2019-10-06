@@ -12,6 +12,9 @@ import yaujen.bankai.myapplication.R;
 import yaujen.bankai.myapplication.AppUtility;
 import yaujen.bankai.pointandclick.MouseActivity;
 
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
+
 public class NextActivity extends MouseActivity {
 
     private AppUtility singleton;
@@ -64,6 +67,8 @@ public class NextActivity extends MouseActivity {
             intent.putExtra(KEY_NAME_CONTROL_METHOD, singleton.getControlMethod());
             intent.putExtra(KEY_NAME_TILT_GAIN, singleton.getTiltGain());
             intent.putExtra(KEY_NAME_CLICKING_METHOD, singleton.getClickingMethod());
+            intent.putExtra(KEY_NAME_SMOOTH, singleton.getSmooth());
+            intent.putExtra(KEY_NAME_DELAY, singleton.getDelay());
 
             intent.putExtra(KEY_NAME_CURSOR_W, extras.getInt(KEY_NAME_CURSOR_W));
             intent.putExtra(KEY_NAME_CURSOR_H, extras.getInt(KEY_NAME_CURSOR_H));

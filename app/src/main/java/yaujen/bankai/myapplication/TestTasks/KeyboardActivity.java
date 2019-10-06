@@ -27,6 +27,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
@@ -61,6 +63,8 @@ public class KeyboardActivity extends MouseActivity {
     private String controlMethod;
     private String clickingMethod;
     private int tiltGain;
+    private int smooth;
+    private int delay;
 
 
     private HashMap<String, Integer> keyboard_map = new HashMap<>();
@@ -90,6 +94,8 @@ public class KeyboardActivity extends MouseActivity {
         controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+        smooth = Integer.parseInt(extras.getString(KEY_NAME_SMOOTH));
+        delay = Integer.parseInt(extras.getString(KEY_NAME_DELAY));
 
         Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
         setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
@@ -99,6 +105,9 @@ public class KeyboardActivity extends MouseActivity {
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
+
+        setSmooth(smooth);
+        setDelay(delay);
 
         setup_keyboard_map();
 

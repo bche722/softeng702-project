@@ -30,6 +30,8 @@ import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
@@ -67,6 +69,16 @@ public class TextEditorActivity extends MouseActivity {
         controlMethod = extras.getString ( KEY_NAME_CONTROL_METHOD );
         clickingMethod = extras.getString ( KEY_NAME_CLICKING_METHOD );
         tiltGain = Integer.parseInt ( extras.getString ( KEY_NAME_TILT_GAIN ) );
+
+
+        int smooth = Integer.parseInt(extras.getString(KEY_NAME_SMOOTH));
+        int delay = Integer.parseInt(extras.getString(KEY_NAME_DELAY));
+
+        setSmooth(smooth);
+        setDelay(delay);
+        setClickingMethod(ClickingMethod.valueOf(clickingMethod));
+        setControlMethod(ControlMethod.valueOf(controlMethod));
+        setTiltGain(tiltGain);
 
         setClickingMethod ( ClickingMethod.valueOf ( clickingMethod ) );
         setControlMethod ( ControlMethod.valueOf ( controlMethod ) );

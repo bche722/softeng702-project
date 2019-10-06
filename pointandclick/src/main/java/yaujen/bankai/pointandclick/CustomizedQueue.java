@@ -27,4 +27,9 @@ public class CustomizedQueue extends LinkedList < Integer > {
         return average / this.size ( );
     }
 
+    public void setSize(int size){
+        size = size==0?1:size;
+        this.size = size;
+    }
+
 }

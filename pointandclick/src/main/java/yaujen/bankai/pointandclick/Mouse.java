@@ -33,7 +33,7 @@ public class Mouse implements Serializable {
 
     private Bitmap mouseBitmap;
 
-    public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetx, int offsety) {
+    public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetx, int offsety, int delay) {
         _icon = icon;
         _x = initialX;
         _y = initialY;
@@ -44,8 +44,9 @@ public class Mouse implements Serializable {
         offsetX = offsetx;
         offsetY = offsety;
 
-        xQueue = new CustomizedQueue ( 100 );
-        yQueue = new CustomizedQueue ( 100 );
+        delay = delay==0?1:delay;
+        xQueue = new CustomizedQueue ( delay );
+        yQueue = new CustomizedQueue ( delay );
     }
 
 //    public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetX, int offsetY){
@@ -142,4 +143,9 @@ public class Mouse implements Serializable {
         return mouseBitmap;
     }
 
+    public void setSize(int delay){
+        delay = delay==0?1:delay;
+        xQueue.setSize(delay);
+        yQueue.setSize(delay);
+    }
 }

@@ -35,12 +35,16 @@ public class DemoActivity extends AppCompatActivity {
     // Dropdown Options
     public static final String[] CONTROL_METHODS = new String[]{ControlMethod.POSITION_CONTROL.name(), ControlMethod.VELOCITY_CONTROL.name()};
     public static final String[] TILT_GAINS = new String[]{"10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140", "145", "150", "160", "170", "180", "190", "200", "225", "250", "275", "300", "325", "350", "375", "400"};
+    public static final String[] SMOOTH = new String[]{"0","10","20","30","40","50","60","70","80","90","100",};
+    public static final String[] DELAY = new String[]{"0","10","20","30","40","50","60","70","80","90","100",};
     public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(), ClickingMethod.FLOATING_BUTTON.name(), ClickingMethod.BACK_TAP.name(), ClickingMethod.BEZEL_SWIPE.name()};
     public static final String[] TASKS = new String[]{/*Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), */Tasks.Draw.name(), /*Tasks.RandomBtn.name(), */Tasks.BigImage.name(),Tasks.TextEditor.name(),Tasks.Calculator.name()};
 
     // KEY 
     public static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
     public static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
+    public static final String KEY_NAME_SMOOTH = "SMOOTH";
+    public static final String KEY_NAME_DELAY = "DELAY";
     public static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
     public static final String KEY_NAME_CURSOR = "CURSOR";
     public static final String KEY_NAME_CURSOR_W = "CURSOR_W";
@@ -73,6 +77,8 @@ public class DemoActivity extends AppCompatActivity {
         // Dropdown
         Spinner dropdownControlMethod = findViewById(R.id.control_method);
         Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
+        Spinner dropdownSmooth = findViewById(R.id.smooth);
+        Spinner dropdownDelay = findViewById(R.id.delay);
         Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
         Spinner dropdownTask = findViewById(R.id.task);
         Spinner dropdownCursor = findViewById(R.id.cursor);
@@ -80,6 +86,8 @@ public class DemoActivity extends AppCompatActivity {
         // Adapters to describe how it is displayed
         ArrayAdapter<String> adapterControlMethod = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CONTROL_METHODS);
         ArrayAdapter<String> adapterTiltGain = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, TILT_GAINS);
+        ArrayAdapter<String> adapterSmooth = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SMOOTH);
+        ArrayAdapter<String> adapterDelay = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, DELAY);
         ArrayAdapter<String> adapterClickingMethod = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CLICKING_METHODS);
         ArrayAdapter<String> adapterTask = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, TASKS);
         ArrayAdapter<String> adapterCursor = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CURSORS);
@@ -87,6 +95,9 @@ public class DemoActivity extends AppCompatActivity {
         //set the spinners adapter to the previously created one.
         dropdownControlMethod.setAdapter(adapterControlMethod);
         dropdownTiltGain.setAdapter(adapterTiltGain);
+        dropdownSmooth.setAdapter(adapterSmooth);
+        dropdownDelay.setAdapter(adapterDelay);
+
         dropdownClickingMethod.setAdapter(adapterClickingMethod);
         dropdownTask.setAdapter(adapterTask);
         dropdownCursor.setAdapter(adapterCursor);
@@ -123,6 +134,7 @@ public class DemoActivity extends AppCompatActivity {
                 StartExperiment();
             }
         });
+
     }
 
 
@@ -234,17 +246,20 @@ public class DemoActivity extends AppCompatActivity {
     private void onStartButton() {
         Spinner dropdownControlMethod = findViewById(R.id.control_method);
         Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
+        Spinner dropdownSmooth = findViewById(R.id.smooth);
+        Spinner dropdownDelay = findViewById(R.id.delay);
         Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
         Spinner dropdownTask = findViewById(R.id.task);
         Spinner dropdownCursor = findViewById(R.id.cursor);
 
         String controlMethod = dropdownControlMethod.getSelectedItem().toString();
         String tiltGain = dropdownTiltGain.getSelectedItem().toString();
+        String smooth = dropdownSmooth.getSelectedItem().toString();
+        String delay = dropdownDelay.getSelectedItem().toString();
         String clickingMethod = dropdownClickingMethod.getSelectedItem().toString();
         String task = dropdownTask.getSelectedItem().toString();
 
         String cursorString = dropdownCursor.getSelectedItem().toString();
-        Bitmap cursor = (Bitmap) cursorMap.get(cursorString)[0];
 
         // String message = "You chose: "+controlMethod+", "+tiltGain+", "+clickingMethod+", "+task;
         // DemoActivity.this.outputMessage(message);
@@ -267,6 +282,8 @@ public class DemoActivity extends AppCompatActivity {
         if (myIntent != null) {
             myIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
             myIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+            myIntent.putExtra(KEY_NAME_SMOOTH, smooth);
+            myIntent.putExtra(KEY_NAME_DELAY, delay);
             myIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
             myIntent.putExtra(KEY_NAME_CURSOR, (Bitmap) cursorMap.get(cursorString)[0]);
@@ -295,6 +312,10 @@ public class DemoActivity extends AppCompatActivity {
         Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
         Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
         Spinner dropdownCursor = findViewById(R.id.cursor);
+        Spinner dropdownSmooth = findViewById(R.id.smooth);
+        Spinner dropdownDelay = findViewById(R.id.delay);
+        String smooth = dropdownSmooth.getSelectedItem().toString();
+        String delay = dropdownDelay.getSelectedItem().toString();
 
         String controlMethod = dropdownControlMethod.getSelectedItem().toString();
         String tiltGain = dropdownTiltGain.getSelectedItem().toString();
@@ -303,12 +324,14 @@ public class DemoActivity extends AppCompatActivity {
         String cursorString = dropdownCursor.getSelectedItem().toString();
         Bitmap cursor = (Bitmap) cursorMap.get(cursorString)[0];
 
-        singleton.setExtras(controlMethod, clickingMethod, tiltGain);
+        singleton.setExtras(controlMethod, clickingMethod, tiltGain, smooth, delay);
 
 
         if (intent != null) {
             intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
             intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
+            intent.putExtra(KEY_NAME_SMOOTH, smooth);
+            intent.putExtra(KEY_NAME_DELAY, delay);
             intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
             intent.putExtra(KEY_NAME_CURSOR, (Bitmap) cursorMap.get(cursorString)[0]);
