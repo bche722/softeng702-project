@@ -38,7 +38,7 @@
             android:name=".TextEditorActivity"
             android:screenOrientation="portrait"
             />
-        <activity android:name=".NumpadActivity"
+        <activity android:name=".TestTasks.NumpadActivity"
             android:screenOrientation="portrait"
             >
             <intent-filter>

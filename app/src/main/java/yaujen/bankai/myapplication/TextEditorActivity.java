@@ -3,6 +3,7 @@ package yaujen.bankai.myapplication;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.Gravity;
@@ -70,6 +71,10 @@ public class TextEditorActivity extends MouseActivity {
         setClickingMethod ( ClickingMethod.valueOf ( clickingMethod ) );
         setControlMethod ( ControlMethod.valueOf ( controlMethod ) );
         setTiltGain ( tiltGain );
+
+        Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
+        setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
+                extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
 
         aLog ( "Wikipedia", controlMethod );
         aLog ( "Wikipedia", clickingMethod );
@@ -188,7 +193,17 @@ public class TextEditorActivity extends MouseActivity {
     public void onClicku ( View view ) {
         String letter = (String) ((Button) view).getText ( );
         String context = text.getText ( ).toString ( );
-        text.setText ( context + letter );
+
+        if(letter.equals("<-")){
+            try {
+                text.setText(context.substring(0, context.length() - 1));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else{
+            text.setText ( context + letter );
+        }
+
     }
 
     public void onBackClicku ( View v ) {

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:onClick="onBackClicku"
-    tools:context=".KeyboardActivity">
+    tools:context="TestTasks.KeyboardActivity">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/alpha"
@@ -76,11 +76,11 @@
 
         <TextView
             android:id="@+id/text"
-            android:layout_width="375dp"
+            android:layout_width="0dp"
             android:layout_height="450dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -273,7 +273,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginRight="10dp"
                 android:orientation="horizontal">
 
                 <Button
@@ -331,6 +331,14 @@
                     android:layout_weight="1"
                     android:onClick="onClicku"
                     android:text="m" />
+
+                <Button
+                    android:id="@+id/button4"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClicku"
+                    android:text="&lt;-" />
 
             </LinearLayout>
 
