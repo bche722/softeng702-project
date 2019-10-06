@@ -274,8 +274,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 //        Log.d("testlay", findViewById(android.R.id.content).toString());
 
 
+//        MotionEvent downEvent = MotionEvent.
+//                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -290,7 +292,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long upTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis();
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -306,7 +308,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long eventTime = SystemClock.uptimeMillis();
 
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
         downEvent.setSource(420);
 

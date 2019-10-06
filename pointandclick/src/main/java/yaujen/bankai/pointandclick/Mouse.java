@@ -19,6 +19,8 @@ public class Mouse {
     //coordinates
     private int _x;
     private int _y;
+    private CustomizedQueue xQueue;
+    private CustomizedQueue yQueue;
     private int width;
     private int height;
     private int xDims;
@@ -32,6 +34,8 @@ public class Mouse {
         yDims = initialY*2;
         this.width = width;
         this.height = height;
+        xQueue = new CustomizedQueue ( 100 );
+        yQueue = new CustomizedQueue ( 100 );
     }
 
     public int get_x() {
@@ -40,6 +44,14 @@ public class Mouse {
 
     public int get_y() {
         return _y;
+    }
+
+    public int getAverageX(){
+        return xQueue.getAverage ();
+    }
+
+    public int getAverageY(){
+        return yQueue.getAverage ();
     }
 
 
@@ -69,6 +81,9 @@ public class Mouse {
 
         _x = x;
         _y = y;
+
+        xQueue.add ( x );
+        yQueue.add ( y );
 
         Rect bounds = _icon.copyBounds();
         bounds.left = x;
