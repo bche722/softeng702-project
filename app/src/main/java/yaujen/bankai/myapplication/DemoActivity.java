@@ -43,6 +43,8 @@ public class DemoActivity extends AppCompatActivity {
     public static final String KEY_NAME_CURSOR = "CURSOR";
     public static final String KEY_NAME_CURSOR_W = "CURSOR_W";
     public static final String KEY_NAME_CURSOR_H = "CURSOR_H";
+    public static final String KEY_NAME_CURSOR_OFFSET_X = "CURSOR_OFFSET_X";
+    public static final String KEY_NAME_CURSOR_OFFSET_Y = "CURSOR__OFFSET_Y";
 
     private HashMap<String, Object[]> cursorMap = new HashMap<>();
 
@@ -126,9 +128,11 @@ public class DemoActivity extends AppCompatActivity {
                     myIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
                     myIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
-//                    myIntent.putExtra(KEY_NAME_CURSOR,(Bitmap) cursorMap.get(cursorString)[0]);
-//                    myIntent.putExtra(KEY_NAME_CURSOR_W,(int) cursorMap.get(cursorString)[1]);
-//                    myIntent.putExtra(KEY_NAME_CURSOR_H,(int) cursorMap.get(cursorString)[2]);
+                    myIntent.putExtra(KEY_NAME_CURSOR, (Bitmap) cursorMap.get(cursorString)[0]);
+                    myIntent.putExtra(KEY_NAME_CURSOR_W, (int) cursorMap.get(cursorString)[1]);
+                    myIntent.putExtra(KEY_NAME_CURSOR_H, (int) cursorMap.get(cursorString)[2]);
+                    myIntent.putExtra(KEY_NAME_CURSOR_OFFSET_X, (int) cursorMap.get(cursorString)[3]);
+                    myIntent.putExtra(KEY_NAME_CURSOR_OFFSET_Y, (int) cursorMap.get(cursorString)[4]);
                     try {
                         DemoActivity.this.startActivity(myIntent);
 
@@ -201,19 +205,30 @@ public class DemoActivity extends AppCompatActivity {
     private void initialiseCursors() {
         Drawable drawableArrow = Objects.requireNonNull(ContextCompat.
                 getDrawable(getBaseContext(), yaujen.bankai.pointandclick.R.drawable.cursor));
+
+        Bitmap bitmapCursor = ((BitmapDrawable) drawableArrow).getBitmap();
+        Object[] cursor1 = {bitmapCursor, bitmapCursor.getWidth() / 2, bitmapCursor.getHeight() / 2, 0, 0};
+        cursorMap.put("cursor", cursor1);
+
+        Object[] cursor2 = {bitmapCursor, bitmapCursor.getWidth(), bitmapCursor.getHeight(), 0, 0};
+        cursorMap.put("cursor_large", cursor2);
+
         Drawable drawableCross = Objects.requireNonNull(ContextCompat.
                 getDrawable(getBaseContext(), yaujen.bankai.pointandclick.R.drawable.cross));
 
-        Bitmap bitmap1 = ((BitmapDrawable) drawableArrow).getBitmap();
-        Object[] cursor1 = {bitmap1, bitmap1.getWidth()/2, bitmap1.getHeight()/2};
-        cursorMap.put("cursor",cursor1);
+        Bitmap bitmapCross = ((BitmapDrawable) drawableCross).getBitmap();
+        Object[] cross1 = {bitmapCross, 50, 50, 25, 25};
+        cursorMap.put("cross", cross1);
 
-        Object[] cursor2 = {bitmap1, bitmap1.getWidth(), bitmap1.getHeight()};
-        cursorMap.put("cursor_large",cursor2);
+        Object[] cross2 = {bitmapCross, 80, 80, 40, 40};
+        cursorMap.put("cross_large", cross2);
 
-        Bitmap bitmap2 = ((BitmapDrawable) drawableCross).getBitmap();
-        Object[] cross1 = {bitmap2, bitmap2.getWidth(), bitmap2.getHeight()};
-        cursorMap.put("cross",cross1);
+        Drawable fancyArrow = Objects.requireNonNull(ContextCompat.
+                getDrawable(getBaseContext(), yaujen.bankai.pointandclick.R.drawable.seibacur));
+
+        Bitmap bitmapFancy = ((BitmapDrawable) fancyArrow).getBitmap();
+        Object[] fancy1 = {bitmapFancy, bitmapFancy.getWidth(), bitmapFancy.getHeight(), 0, 0};
+        cursorMap.put("fancy cursor", fancy1);
 
 
     }

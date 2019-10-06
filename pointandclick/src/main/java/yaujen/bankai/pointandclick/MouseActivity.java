@@ -64,7 +64,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private ClickingMethod clickingMethod;
 
     protected Mouse mouse;
-    protected int mouseWidth, mouseHeight;
+    private int mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -83,8 +83,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         initialY = this.getResources().getDisplayMetrics().heightPixels / 2;
 
 
-        refPitch = 0;
-        refRoll = 0;
+        refPitch = sensorFusion.getPitch();
+        refRoll = sensorFusion.getRoll();
+
+        Log.d("testInit", refPitch + " xxxx " + refRoll);
 
         keyDown = false;
 
@@ -92,6 +94,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
 
         initialiseMouse();
+
 
     }
 
@@ -156,7 +159,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
                 getDrawable(getBaseContext(), R.drawable.cursor));
         mouseWidth = 40;
         mouseHeight = 60;
-        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight);
+        mouseOffsetX = 0;
+        mouseOffsetY = 0;
+        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY);
 //        Mouse smallArrow = new Mouse(drawableArrow, getRealWidth(STANDARD_CURSOR_WIDTH / 2), getRealHeight(STANDARD_CURSOR_WIDTH / 2), 0, 0);
 //        Mouse crosshair = new Mouse(drawableCrosshair, getRealWidth(60), getRealHeight(60), getRealWidth(30), getRealHeight(30));
 //        Mouse smallCrosshair = new Mouse(drawableCrosshair, getRealWidth(30), getRealHeight(30), getRealWidth(15), getRealHeight(15));
@@ -166,13 +171,14 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     }
 
-    protected void setupMouse(Bitmap m) {
+    protected void setupMouse(Bitmap m, int width, int height, int offsetX, int offsetY) {
 
         Drawable drawable = new BitmapDrawable(getResources(), m);
         mouse.setIcon(drawable);
-        mouse.setWidth(mouseWidth);
-        mouse.setHeight(mouseHeight);
-        //mouse = m;
+        mouse.setWidth(width);
+        mouse.setHeight(height);
+        mouse.setOffsetX(offsetX);
+        mouse.setOffsetY(offsetY);
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
         mouse.updateLocation(initialX, initialY);
 
@@ -452,9 +458,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     public void calibratePointer() {
         setRefPitch(currentPitch);
         setRefRoll(currentRoll);
-        if (controlMethod == ControlMethod.VELOCITY_CONTROL) {
-            mouse.updateLocation(initialX, initialY);
-        }
+//        if (controlMethod == ControlMethod.VELOCITY_CONTROL) {
+        mouse.updateLocation(initialX, initialY);
+//        }
+
+        Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
+
     }
 
     public double getRefPitch() {

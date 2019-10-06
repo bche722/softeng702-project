@@ -1,6 +1,7 @@
 package yaujen.bankai.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,11 @@ import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
@@ -63,7 +69,7 @@ public class WikipediaActivity extends MouseActivity {
 
         // How to add fab clicking
         buttonClicker = new MovableFloatingActionButton(this);
-        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(),getFabConstraintLayoutParams(100,0));
+        constraintLayout.addView(buttonClicker, constraintLayout.getChildCount(), getFabConstraintLayoutParams(100, 0));
         setMovableFloatingActionButton(buttonClicker);
 
 
@@ -77,11 +83,9 @@ public class WikipediaActivity extends MouseActivity {
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
 
-
-        aLog("Wikipedia", controlMethod);
-        aLog("Wikipedia", clickingMethod);
-        aLog("Wikipedia", tiltGain + "");
-
+        Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
+        setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
+                extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
 
 
         linksLeft = findViewById(R.id.links);
@@ -109,7 +113,7 @@ public class WikipediaActivity extends MouseActivity {
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     updateText();
-                } else if (taskFinished()){
+                } else if (taskFinished()) {
                     goToResults();
                 }
             }
@@ -122,7 +126,7 @@ public class WikipediaActivity extends MouseActivity {
         String text = "hello";
         try {
             byte[] buffer = new byte[is.available()];
-            while (is.read(buffer) != -1);
+            while (is.read(buffer) != -1) ;
             text = new String(buffer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -137,7 +141,7 @@ public class WikipediaActivity extends MouseActivity {
         URLSpan[] urlSpans = spanned.getSpans(0, spanned.length(), URLSpan.class);
 
         // Adds a click listener to every url
-        for (final URLSpan urlSpan: urlSpans) {
+        for (final URLSpan urlSpan : urlSpans) {
             final String url = urlSpan.getURL();
 
             // Only add links we want to the task
@@ -193,7 +197,7 @@ public class WikipediaActivity extends MouseActivity {
             resultsIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
             resultsIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
 
-            resultsIntent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken)/1000 + "s");
+            resultsIntent.putExtra(KEY_NAME_TIME_TAKEN, ((double) timeTaken) / 1000 + "s");
             resultsIntent.putExtra(KEY_NAME_ERR_COUNT, totalClicks - correctClicks);
         }
     }

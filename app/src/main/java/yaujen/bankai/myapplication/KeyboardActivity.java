@@ -22,6 +22,8 @@ import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
@@ -82,15 +84,10 @@ public class KeyboardActivity extends MouseActivity {
         controlMethod = extras.getString(KEY_NAME_CONTROL_METHOD);
         clickingMethod = extras.getString(KEY_NAME_CLICKING_METHOD);
         tiltGain = Integer.parseInt(extras.getString(KEY_NAME_TILT_GAIN));
+
         Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
-        mouseWidth = extras.getInt(KEY_NAME_CURSOR_W);
-        mouseHeight = extras.getInt(KEY_NAME_CURSOR_H);
-
-
-//        Bundle bundle = (Bundle) extras.get(KEY_NAME_CURSOR);
-//        Mouse mouse = (Mouse) bundle.getSerializable(KEY_NAME_CURSOR);
-        setupMouse(mouseBitmap);
-
+        setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
+                extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
 
 
         setClickingMethod(ClickingMethod.valueOf(clickingMethod));
@@ -98,11 +95,6 @@ public class KeyboardActivity extends MouseActivity {
         setTiltGain(tiltGain);
 
         setup_keyboard_map();
-
-
-        aLog("Wikipedia", controlMethod);
-        aLog("Wikipedia", clickingMethod);
-        aLog("Wikipedia", tiltGain + "");
 
 
         startButton = findViewById(R.id.startButton);
@@ -113,7 +105,7 @@ public class KeyboardActivity extends MouseActivity {
                     hasStarted = true;
                     startTime = System.currentTimeMillis();
                     nextLetter.setVisibility(View.VISIBLE);
-                    change_keyboard_colour("t",ButtonClickTime.NextClick);
+                    change_keyboard_colour("t", ButtonClickTime.NextClick);
                     colorString();
                     startButton.setVisibility(View.INVISIBLE);
                 } else if (textToWrite.length() == 0) {
@@ -258,7 +250,7 @@ public class KeyboardActivity extends MouseActivity {
         keyboard_map.put("y", new Integer(R.id.y));
         keyboard_map.put("z", new Integer(R.id.z));
         keyboard_map.put("space", new Integer(R.id.space));
-        for (String s : keyboard_map.keySet()){
+        for (String s : keyboard_map.keySet()) {
             Button button = findViewById(keyboard_map.get(s));
             Drawable unwrappedDrawable = button.getBackground();
             Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);

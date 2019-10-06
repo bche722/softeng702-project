@@ -1,6 +1,7 @@
 package yaujen.bankai.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,6 +24,11 @@ import yaujen.bankai.pointandclick.Utility;
 
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
+import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_ERR_COUNT;
 import static yaujen.bankai.myapplication.ResultsActivity.KEY_NAME_TIME_TAKEN;
@@ -69,7 +75,12 @@ public class NumpadActivity extends MouseActivity {
         setControlMethod(ControlMethod.valueOf(controlMethod));
         setTiltGain(tiltGain);
 
+        Bitmap mouseBitmap = getIntent().getParcelableExtra(KEY_NAME_CURSOR);
+        setupMouse(mouseBitmap, extras.getInt(KEY_NAME_CURSOR_W), extras.getInt(KEY_NAME_CURSOR_H),
+                extras.getInt(KEY_NAME_CURSOR_OFFSET_X), extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
+
         setup_keyboard_map();
+
 
     }
 
