@@ -224,6 +224,8 @@ public class WikipediaActivity extends MouseActivity {
         singleton.setErrorCountWIKI(totalClicks-correctClicks);
         singleton.incTimeTaken(timeTaken);
         Intent intent = new Intent(this, NextActivity.class);
+        extras = packExtras();
+        intent.putExtra("BUNDLE", extras);
         startActivity(intent);
     }
 

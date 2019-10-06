@@ -2,6 +2,7 @@ package yaujen.bankai.pointandclick;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -51,6 +52,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private double refRoll;
 
 
+    protected Bundle extras;
+
+
     private BackTapService backTapService;
 
 
@@ -65,12 +69,24 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     protected Mouse mouse;
     private int mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY;
+    private Bitmap mouseBitmap;
+
+    protected static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
+    protected static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
+    protected static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
+    protected static final String KEY_NAME_CURSOR = "CURSOR";
+    protected static final String KEY_NAME_CURSOR_W = "CURSOR_W";
+    protected static final String KEY_NAME_CURSOR_H = "CURSOR_H";
+    protected static final String KEY_NAME_CURSOR_OFFSET_X = "CURSOR_OFFSET_X";
+    protected static final String KEY_NAME_CURSOR_OFFSET_Y = "CURSOR__OFFSET_Y";
 
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+
 
         // Sensor configs
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
@@ -91,6 +107,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         keyDown = false;
 
         backTapService = new BackTapService(this);
+
+
 
 
         initialiseMouse();
@@ -174,6 +192,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     protected void setupMouse(Bitmap m, int width, int height, int offsetX, int offsetY) {
 
         Drawable drawable = new BitmapDrawable(getResources(), m);
+        mouseBitmap = m;
         mouse.setIcon(drawable);
         mouse.setWidth(width);
         mouse.setHeight(height);
@@ -465,6 +484,20 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
 
     }
+
+
+    protected Bundle packExtras() {
+        extras = new Bundle();
+        extras.putInt(KEY_NAME_CURSOR_W, mouseWidth);
+        extras.putInt(KEY_NAME_CURSOR_H, mouseHeight);
+        extras.putInt(KEY_NAME_CURSOR_OFFSET_X, mouseOffsetX);
+        extras.putInt(KEY_NAME_CURSOR_OFFSET_Y, mouseOffsetY);
+        extras.putParcelable(KEY_NAME_CURSOR, mouseBitmap);
+        return extras;
+
+    }
+
+
 
     public double getRefPitch() {
         return refPitch;

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.myapplication.ButtonClickTime;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
@@ -125,7 +126,7 @@ public class NumpadActivity extends MouseActivity {
         }
     }
 
-    public void onFinishClicku(View view){
+    public void onFinish(){
 
         long timeTaken = System.currentTimeMillis() - startTime;
 
@@ -232,6 +233,8 @@ public class NumpadActivity extends MouseActivity {
         singleton.incTimeTaken(timeTaken);
         singleton.setErrorCountNUM(errorCount);
         Intent intent = new Intent(this, NextActivity.class);
+        extras = packExtras();
+        intent.putExtra("BUNDLE", extras);
         startActivity(intent);
     }
 }

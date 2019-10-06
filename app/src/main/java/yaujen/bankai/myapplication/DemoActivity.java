@@ -31,13 +31,11 @@ import yaujen.bankai.pointandclick.Mouse;
 public class DemoActivity extends AppCompatActivity {
     public enum Tasks {Keyboard, Numpad, Wikipedia, Draw, RandomBtn, BigImage}
 
-    ;
-
 
     // Dropdown Options
     public static final String[] CONTROL_METHODS = new String[]{ControlMethod.POSITION_CONTROL.name(), ControlMethod.VELOCITY_CONTROL.name()};
-    public static final String[] TILT_GAINS = new String[]{"10","15","20","25","30","35","40","45","50","55","60","65","70","75","80","85","90","95","100","105","110","115","120","125","130","135","140","145","150","160","170","180","190","200","225","250","275","300","325","350","375","400"};
-    public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(),ClickingMethod.FLOATING_BUTTON.name(),ClickingMethod.BACK_TAP.name(),ClickingMethod.BEZEL_SWIPE.name() };
+    public static final String[] TILT_GAINS = new String[]{"10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "65", "70", "75", "80", "85", "90", "95", "100", "105", "110", "115", "120", "125", "130", "135", "140", "145", "150", "160", "170", "180", "190", "200", "225", "250", "275", "300", "325", "350", "375", "400"};
+    public String[] CLICKING_METHODS = new String[]{ClickingMethod.VOLUME_DOWN.name(), ClickingMethod.FLOATING_BUTTON.name(), ClickingMethod.BACK_TAP.name(), ClickingMethod.BEZEL_SWIPE.name()};
     public static final String[] TASKS = new String[]{/*Tasks.Keyboard.name(), Tasks.Numpad.name(), Tasks.Wikipedia.name(), */Tasks.Draw.name(), /*Tasks.RandomBtn.name(), */Tasks.BigImage.name()};
 
     // KEY 
@@ -70,9 +68,6 @@ public class DemoActivity extends AppCompatActivity {
         Set<String> c = cursorMap.keySet();
         String[] CURSORS = c.toArray(new String[cursorMap.size()]);
         singleton = AppUtility.getInstance();
-
-
-
 
 
         // Dropdown
@@ -110,19 +105,16 @@ public class DemoActivity extends AppCompatActivity {
         experimentSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                experimentSwitch();
+                experimentSwitcher();
             }
         });
-
-
 
 
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                    onStartButton();
+                onStartButton();
             }
         });
-
 
 
         experiment.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +124,7 @@ public class DemoActivity extends AppCompatActivity {
             }
         });
     }
+
 
     /**
      * Toast Message being shown
@@ -216,12 +209,13 @@ public class DemoActivity extends AppCompatActivity {
         Bitmap bitmapFancy = ((BitmapDrawable) fancyArrow).getBitmap();
         Object[] fancy1 = {bitmapFancy, bitmapFancy.getWidth(), bitmapFancy.getHeight(), 0, 0};
         cursorMap.put("fancy cursor", fancy1);
+    }
 
 
-    private void experimentSwitch() {
+    private void experimentSwitcher() {
         TextView taskText = findViewById(R.id.text_task);
         Spinner task = findViewById(R.id.task);
-        if(experimentSwitch.isChecked()) {
+        if (experimentSwitch.isChecked()) {
 
 
             taskText.setVisibility(View.INVISIBLE);
@@ -242,11 +236,15 @@ public class DemoActivity extends AppCompatActivity {
         Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
         Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
         Spinner dropdownTask = findViewById(R.id.task);
+        Spinner dropdownCursor = findViewById(R.id.cursor);
 
         String controlMethod = dropdownControlMethod.getSelectedItem().toString();
         String tiltGain = dropdownTiltGain.getSelectedItem().toString();
         String clickingMethod = dropdownClickingMethod.getSelectedItem().toString();
         String task = dropdownTask.getSelectedItem().toString();
+
+        String cursorString = dropdownCursor.getSelectedItem().toString();
+        Bitmap cursor = (Bitmap) cursorMap.get(cursorString)[0];
 
         // String message = "You chose: "+controlMethod+", "+tiltGain+", "+clickingMethod+", "+task;
         // DemoActivity.this.outputMessage(message);
@@ -254,22 +252,28 @@ public class DemoActivity extends AppCompatActivity {
         // SWITCHING TO DIFFERENT APP
         Intent myIntent = null;
 
-        if(task.equals(Tasks.Draw.name())){
+        if (task.equals(Tasks.Draw.name())) {
             myIntent = new Intent(DemoActivity.this, DrawActivity.class);
-        }else if(task.equals(Tasks.RandomBtn.name())){
+        } else if (task.equals(Tasks.RandomBtn.name())) {
             myIntent = new Intent(DemoActivity.this, RandomBtnActivity.class);
-        }else if(task.equals(Tasks.BigImage.name())){
+        } else if (task.equals(Tasks.BigImage.name())) {
             myIntent = new Intent(DemoActivity.this, BigimageActivity.class);
         }
 
-        if(myIntent != null) {
+        if (myIntent != null) {
             myIntent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
             myIntent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
             myIntent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+
+            myIntent.putExtra(KEY_NAME_CURSOR, (Bitmap) cursorMap.get(cursorString)[0]);
+            myIntent.putExtra(KEY_NAME_CURSOR_W, (int) cursorMap.get(cursorString)[1]);
+            myIntent.putExtra(KEY_NAME_CURSOR_H, (int) cursorMap.get(cursorString)[2]);
+            myIntent.putExtra(KEY_NAME_CURSOR_OFFSET_X, (int) cursorMap.get(cursorString)[3]);
+            myIntent.putExtra(KEY_NAME_CURSOR_OFFSET_Y, (int) cursorMap.get(cursorString)[4]);
             try {
                 DemoActivity.this.startActivity(myIntent);
 
-            } catch (Exception e){
+            } catch (Exception e) {
                 DemoActivity.this.outputMessage(e.getMessage());
             }
         } else {
@@ -286,26 +290,37 @@ public class DemoActivity extends AppCompatActivity {
         Spinner dropdownControlMethod = findViewById(R.id.control_method);
         Spinner dropdownTiltGain = findViewById(R.id.tilt_gain);
         Spinner dropdownClickingMethod = findViewById(R.id.clicking_method);
+        Spinner dropdownCursor = findViewById(R.id.cursor);
 
         String controlMethod = dropdownControlMethod.getSelectedItem().toString();
         String tiltGain = dropdownTiltGain.getSelectedItem().toString();
         String clickingMethod = dropdownClickingMethod.getSelectedItem().toString();
 
+        String cursorString = dropdownCursor.getSelectedItem().toString();
+        Bitmap cursor = (Bitmap) cursorMap.get(cursorString)[0];
+
         singleton.setExtras(controlMethod, clickingMethod, tiltGain);
 
 
-        if(intent != null) {
+        if (intent != null) {
             intent.putExtra(KEY_NAME_CONTROL_METHOD, controlMethod);
             intent.putExtra(KEY_NAME_TILT_GAIN, tiltGain);
             intent.putExtra(KEY_NAME_CLICKING_METHOD, clickingMethod);
+
+            intent.putExtra(KEY_NAME_CURSOR, (Bitmap) cursorMap.get(cursorString)[0]);
+            intent.putExtra(KEY_NAME_CURSOR_W, (int) cursorMap.get(cursorString)[1]);
+            intent.putExtra(KEY_NAME_CURSOR_H, (int) cursorMap.get(cursorString)[2]);
+            intent.putExtra(KEY_NAME_CURSOR_OFFSET_X, (int) cursorMap.get(cursorString)[3]);
+            intent.putExtra(KEY_NAME_CURSOR_OFFSET_Y, (int) cursorMap.get(cursorString)[4]);
             try {
                 DemoActivity.this.startActivity(intent);
 
-            } catch (Exception e){
+            } catch (Exception e) {
                 DemoActivity.this.outputMessage(e.getMessage());
             }
         } else {
             DemoActivity.this.outputMessage("Intent is null!");
         }
     }
+
 }

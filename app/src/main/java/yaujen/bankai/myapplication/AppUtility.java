@@ -1,5 +1,7 @@
 package yaujen.bankai.myapplication;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 

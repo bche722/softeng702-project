@@ -200,6 +200,8 @@ public class RandomBtnActivity extends MouseActivity {
         singleton.incTimeTaken(timeTaken);
 
         Intent intent = new Intent(this, NextActivity.class);
+        extras = packExtras();
+        intent.putExtra("BUNDLE", extras);
         startActivity(intent);
     }
 

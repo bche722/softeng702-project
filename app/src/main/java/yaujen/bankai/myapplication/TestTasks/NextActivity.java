@@ -10,8 +10,9 @@ import android.widget.TextView;
 
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.pointandclick.MouseActivity;
 
-public class NextActivity extends AppCompatActivity {
+public class NextActivity extends MouseActivity {
 
     private AppUtility singleton;
 
@@ -27,11 +28,13 @@ public class NextActivity extends AppCompatActivity {
     Class nextTask;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        extras = getIntent().getExtras().getBundle("BUNDLE");
 
         singleton = AppUtility.getInstance();
 
@@ -61,16 +64,25 @@ public class NextActivity extends AppCompatActivity {
             intent.putExtra(KEY_NAME_CONTROL_METHOD, singleton.getControlMethod());
             intent.putExtra(KEY_NAME_TILT_GAIN, singleton.getTiltGain());
             intent.putExtra(KEY_NAME_CLICKING_METHOD, singleton.getClickingMethod());
+
+            intent.putExtra(KEY_NAME_CURSOR_W, extras.getInt(KEY_NAME_CURSOR_W));
+            intent.putExtra(KEY_NAME_CURSOR_H, extras.getInt(KEY_NAME_CURSOR_H));
+            intent.putExtra(KEY_NAME_CURSOR_OFFSET_X, extras.getInt(KEY_NAME_CURSOR_OFFSET_X));
+            intent.putExtra(KEY_NAME_CURSOR_OFFSET_Y, extras.getInt(KEY_NAME_CURSOR_OFFSET_Y));
+            intent.putExtra(KEY_NAME_CURSOR, extras.getParcelable(KEY_NAME_CURSOR));
+
+
+
             try {
                 this.startActivity(intent);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-
         }
     }
+
+
 
     private void goToResults() {
         Intent intent = new Intent(this, ResultsActivity.class);

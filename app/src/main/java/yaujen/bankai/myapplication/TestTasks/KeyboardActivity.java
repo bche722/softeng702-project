@@ -32,6 +32,7 @@ import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_ERR
 import static yaujen.bankai.myapplication.TestTasks.ResultsActivity.KEY_NAME_TIME_TAKEN;
 
 import yaujen.bankai.myapplication.AppUtility;
+import yaujen.bankai.myapplication.ButtonClickTime;
 import yaujen.bankai.myapplication.R;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
@@ -235,6 +236,9 @@ public class KeyboardActivity extends MouseActivity {
         singleton.setErrorCountKEY(totalClicks - correctClicks);
         singleton.incTimeTaken(timeTaken);
         Intent intent = new Intent(this, NextActivity.class);
+        extras = packExtras();
+        intent.putExtra("BUNDLE", extras);
+
         startActivity(intent);
     }
 

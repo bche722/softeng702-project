@@ -29,6 +29,8 @@ public class Mouse implements Serializable {
     private int offsetX;
     private int offsetY;
 
+    private Bitmap mouseBitmap;
+
     public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetx, int offsety) {
         _icon = icon;
         _x = initialX;
@@ -121,4 +123,9 @@ public class Mouse implements Serializable {
     public void setOffsetY(int offsetY) {
         this.offsetY = offsetY;
     }
+
+    public Bitmap getMouseBitmap() {
+        return mouseBitmap;
+    }
+
 }
