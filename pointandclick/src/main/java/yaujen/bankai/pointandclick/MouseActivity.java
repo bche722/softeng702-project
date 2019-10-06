@@ -29,6 +29,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
@@ -51,6 +53,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private double currentRoll;
     private double refRoll;
 
+    private CustomizedQueue xOffsetQueue;
+    private CustomizedQueue yOffsetQueue;
 
     protected Bundle extras;
 
@@ -104,6 +108,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         Log.d("testInit", refPitch + " xxxx " + refRoll);
 
+        xOffsetQueue = new CustomizedQueue (50);
+        yOffsetQueue = new CustomizedQueue (50);
+
         keyDown = false;
 
         backTapService = new BackTapService(this);
@@ -144,12 +151,18 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         double displacementVEL = velocity * SAMPLING_RATE;
 
 
-        if (controlMethod == ControlMethod.POSITION_CONTROL) {
-            int xOffSet = (int) (displacementPOS * Math.sin(tiltDirection));
-            int yOffSet = (int) (displacementPOS * Math.cos(tiltDirection));
-            if (pitch > 0) {
+        if(controlMethod == ControlMethod.POSITION_CONTROL){
+            int xOffSet = (int) (displacementPOS*Math.sin(tiltDirection));
+            xOffsetQueue.add ( xOffSet ) ;
+            xOffSet = xOffsetQueue.getAverage ();
+            Log.d ( "xOffsetAverageTest", xOffsetQueue.toString ());
+
+            int yOffSet = (int) (displacementPOS*Math.cos(tiltDirection));
+            if(pitch > 0){
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
+            yOffsetQueue.add ( yOffSet );
+            yOffSet = yOffsetQueue.getAverage();
 
             mouse.updateLocation(initialX + xOffSet,
                     initialY + yOffSet);
@@ -287,8 +300,10 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 //        Log.d("testlay", findViewById(android.R.id.content).toString());
 
 
+//        MotionEvent downEvent = MotionEvent.
+//                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -303,7 +318,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long upTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis();
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -319,7 +334,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long eventTime = SystemClock.uptimeMillis();
 
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.get_x(), (float) mouse.get_y(), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
         downEvent.setSource(420);
 

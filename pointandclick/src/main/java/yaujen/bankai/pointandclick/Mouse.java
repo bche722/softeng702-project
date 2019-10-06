@@ -22,6 +22,8 @@ public class Mouse implements Serializable {
     //coordinates
     private int _x;
     private int _y;
+    private CustomizedQueue xQueue;
+    private CustomizedQueue yQueue;
     private int width;
     private int height;
     private int xDims;
@@ -42,6 +44,8 @@ public class Mouse implements Serializable {
         offsetX = offsetx;
         offsetY = offsety;
 
+        xQueue = new CustomizedQueue ( 100 );
+        yQueue = new CustomizedQueue ( 100 );
     }
 
 //    public Mouse(Drawable icon, int initialX, int initialY, int width, int height, int offsetX, int offsetY){
@@ -60,6 +64,14 @@ public class Mouse implements Serializable {
 
     public int get_y() {
         return _y;
+    }
+
+    public int getAverageX(){
+        return xQueue.getAverage ();
+    }
+
+    public int getAverageY(){
+        return yQueue.getAverage ();
     }
 
 
@@ -90,6 +102,8 @@ public class Mouse implements Serializable {
 
 //        Log.d("testMouse", "_x coord: " + _x + " _y coord: " + _y);
 
+        xQueue.add ( x );
+        yQueue.add ( y );
 
         Rect bounds = _icon.copyBounds();
         bounds.left = x - offsetX;

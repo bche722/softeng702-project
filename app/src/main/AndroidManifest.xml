@@ -34,9 +34,13 @@
         <activity
             android:name=".BigimageActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".TestTasks.NumpadActivity"
-            android:screenOrientation="portrait">
+        <activity 
+            android:name=".TextEditorActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".NumpadActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>
