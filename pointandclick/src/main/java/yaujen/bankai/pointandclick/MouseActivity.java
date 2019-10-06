@@ -3,7 +3,9 @@ package yaujen.bankai.pointandclick;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -30,7 +32,6 @@ import java.util.Objects;
 import static yaujen.bankai.pointandclick.Utility.aLog;
 
 public abstract class MouseActivity extends AppCompatActivity implements SensorEventListener {
-
 
 
     private boolean keyDown;
@@ -62,10 +63,8 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private ControlMethod controlMethod = ControlMethod.POSITION_CONTROL;
     private ClickingMethod clickingMethod;
 
-    private List<Mouse> mice;
-    private Mouse mouse;
-
-
+    protected Mouse mouse;
+    private int mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -80,21 +79,22 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         sensorFusion = new SensorFusion();
         sensorFusion.setMode(SensorFusion.Mode.FUSION);
 
-        initialX = this.getResources().getDisplayMetrics().widthPixels/2;
-        initialY = this.getResources().getDisplayMetrics().heightPixels/2;
+        initialX = this.getResources().getDisplayMetrics().widthPixels / 2;
+        initialY = this.getResources().getDisplayMetrics().heightPixels / 2;
 
-        mice = new ArrayList<>();
 
-        refPitch = 0;
-        refRoll = 0;
+        refPitch = sensorFusion.getPitch();
+        refRoll = sensorFusion.getRoll();
+
+        Log.d("testInit", refPitch + " xxxx " + refRoll);
 
         keyDown = false;
 
         backTapService = new BackTapService(this);
 
 
+        initialiseMouse();
 
-        initialiseMice();
 
     }
 
@@ -115,31 +115,30 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     private void update() {
         currentRoll = sensorFusion.getRoll();
-        double roll =  currentRoll - refRoll; // rotation along x-axis
+        double roll = currentRoll - refRoll; // rotation along x-axis
         currentPitch = sensorFusion.getPitch();
-        double pitch =  currentPitch - refPitch; // rotation along y-axis
+        double pitch = currentPitch - refPitch; // rotation along y-axis
 
-        double tiltMagnitude = Math.sqrt(roll*roll + pitch*pitch);
-        double tiltDirection = Math.asin(roll/tiltMagnitude);
-        double velocity = velTiltGain *tiltMagnitude;
-        double displacementPOS = tiltMagnitude* posTiltGain;
-        double displacementVEL = velocity*SAMPLING_RATE;
+        double tiltMagnitude = Math.sqrt(roll * roll + pitch * pitch);
+        double tiltDirection = Math.asin(roll / tiltMagnitude);
+        double velocity = velTiltGain * tiltMagnitude;
+        double displacementPOS = tiltMagnitude * posTiltGain;
+        double displacementVEL = velocity * SAMPLING_RATE;
 
 
-
-        if(controlMethod == ControlMethod.POSITION_CONTROL){
-            int xOffSet = (int) (displacementPOS*Math.sin(tiltDirection));
-            int yOffSet = (int) (displacementPOS*Math.cos(tiltDirection));
-            if(pitch > 0){
+        if (controlMethod == ControlMethod.POSITION_CONTROL) {
+            int xOffSet = (int) (displacementPOS * Math.sin(tiltDirection));
+            int yOffSet = (int) (displacementPOS * Math.cos(tiltDirection));
+            if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
             mouse.updateLocation(initialX + xOffSet,
                     initialY + yOffSet);
         } else {
-            int xOffSet = (int) (displacementVEL*Math.sin(tiltDirection));
-            int yOffSet = (int) (displacementVEL*Math.cos(tiltDirection));
-            if(pitch > 0){
+            int xOffSet = (int) (displacementVEL * Math.sin(tiltDirection));
+            int yOffSet = (int) (displacementVEL * Math.cos(tiltDirection));
+            if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
 
@@ -155,26 +154,35 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     }
 
 
-    private void initialiseMice() {
+    private void initialiseMouse() {
         Drawable drawableArrow = Objects.requireNonNull(ContextCompat.
                 getDrawable(getBaseContext(), R.drawable.cursor));
-//        Drawable drawableCrosshair = Objects.requireNonNull(ContextCompat.
-//                getDrawable(getBaseContext(), R.drawable.cursor2));
-
-        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, 40, 40);
+        mouseWidth = 40;
+        mouseHeight = 60;
+        mouseOffsetX = 0;
+        mouseOffsetY = 0;
+        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY);
 //        Mouse smallArrow = new Mouse(drawableArrow, getRealWidth(STANDARD_CURSOR_WIDTH / 2), getRealHeight(STANDARD_CURSOR_WIDTH / 2), 0, 0);
 //        Mouse crosshair = new Mouse(drawableCrosshair, getRealWidth(60), getRealHeight(60), getRealWidth(30), getRealHeight(30));
 //        Mouse smallCrosshair = new Mouse(drawableCrosshair, getRealWidth(30), getRealHeight(30), getRealWidth(15), getRealHeight(15));
 
-        mice.add(arrow);
-//        mice.add(smallArrow);
-//        mice.add(crosshair);
-//        mice.add(smallCrosshair);
 
-        mouse = mice.get(0);
+        mouse = arrow;
 
+    }
+
+    protected void setupMouse(Bitmap m, int width, int height, int offsetX, int offsetY) {
+
+        Drawable drawable = new BitmapDrawable(getResources(), m);
+        mouse.setIcon(drawable);
+        mouse.setWidth(width);
+        mouse.setHeight(height);
+        mouse.setOffsetX(offsetX);
+        mouse.setOffsetY(offsetY);
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
-        mouse.updateLocation(initialX,initialY);
+        mouse.updateLocation(initialX, initialY);
+
+
     }
 
 
@@ -211,7 +219,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             calibratePointer();
-            Toast.makeText(this,"Calibrated pointer, pitch: "+ getRefPitch() + ", roll: "+getRefRoll(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -301,13 +309,14 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     /**
      * The movable button is hidden at the start, so please call the method {@link MouseView#setClickingMethod(ClickingMethod)}
+     *
      * @param mFab
      */
-    public void setMovableFloatingActionButton(MovableFloatingActionButton mFab){
+    public void setMovableFloatingActionButton(MovableFloatingActionButton mFab) {
         buttonClicker = mFab;
         buttonClicker.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 simulateTouchDown();
             }
         });
@@ -373,10 +382,11 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     /**
      * Hides or shows the movable button
+     *
      * @param visible
      */
-    public void setVisbilityMovableFloatingActionButton(boolean visible){
-        if(buttonClicker != null){
+    public void setVisbilityMovableFloatingActionButton(boolean visible) {
+        if (buttonClicker != null) {
             buttonClicker.setVisibilityButton(visible);
         }
     }
@@ -390,7 +400,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         this.setVisbilityMovableFloatingActionButton(false);
         backTapService.stopService();
 
-        switch(clickingMethod) {
+        switch (clickingMethod) {
             case BACK_TAP:
                 backTapService.startService();
                 break;
@@ -427,11 +437,12 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
     /**
      * Convenience method to return the ConstraintLayout.LayoutParams for a wrapped view
+     *
      * @param topMargin
      * @param rightMargin
      * @return Customised ConstraintLayout.LayoutParams for a wrapped view
      */
-    public static ConstraintLayout.LayoutParams getFabConstraintLayoutParams(int topMargin, int rightMargin){
+    public static ConstraintLayout.LayoutParams getFabConstraintLayoutParams(int topMargin, int rightMargin) {
         ConstraintLayout.LayoutParams fabParams = new ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT);
@@ -444,12 +455,15 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     /**
      * Calibrate the accelerometer based pointer to consider the current pitch and roll as the reference point, resting position
      */
-    public void calibratePointer(){
+    public void calibratePointer() {
         setRefPitch(currentPitch);
         setRefRoll(currentRoll);
-        if (controlMethod == ControlMethod.VELOCITY_CONTROL) {
-            mouse.updateLocation(initialX, initialY);
-        }
+//        if (controlMethod == ControlMethod.VELOCITY_CONTROL) {
+        mouse.updateLocation(initialX, initialY);
+//        }
+
+        Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
+
     }
 
     public double getRefPitch() {
