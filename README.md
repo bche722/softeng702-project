@@ -1,14 +1,11 @@
-# accel-point-click (project-13-b)
-accel-point-click is an Android library for accelerometer-based pointing and clicking. The clicking methods were created
-with minimal screen occlusion in mind. It supports:
+# accel-point-click 
+accel-point-click is an Android library for accelerometer-based pointing and clicking. The clicking methods were created with minimal screen occlusion in mind. It supports:
 
 2 control modes for pointing:
 - **Velocity-control** - Pointer acts like a ball under the effects of gravity.
 - **Position-control** - Pointer has an initial position and tilt the device moves the pointer away from the initial position.
 
-4 ways of clicking with minimal screen occlusion:
-- **Bezel Swiping** - Small swipe away from any position of the device’s bezel (edge frame of the device) triggers a click.
-- **Floating Button** - A small floating button for clicking, that can be moved around or overlayed at the bezel of the device.
+2 ways of clicking with minimal screen occlusion:
 - **Volume Down Button** - Volume down button is overridden to register a click when pressed on.
 - **Back Tapping** - Tapping the back of the device triggers a click.
 
@@ -122,15 +119,6 @@ mouseView.enableRecalibrationByVolumeUp(true);
 #### Customising pointer clicking method
 Choosing the clicking method for the pointer
 ```java
-// Bezel Swiping
-mouseView.setClickingMethod(ClickingMethod.BEZEL_SWIPE);
-
-// Floating Button
-MovableFloatingActionButton movableButtonView = new MovableFloatingActionButton(this);
-constraintLayout.addView(movableButtonView, constraintLayout.getChildCount(),MouseView.getFabConstraintLayoutParams(100,0));
-mouseView.setMovableFloatingActionButton(movableButtonView);
-mouseView.setClickingMethod(ClickingMethod.FLOATING_BUTTON);
-
 // Volume Down Button
 mouseView.setClickingMethod(ClickingMethod.VOLUME_DOWN);
 
@@ -141,25 +129,12 @@ mouseView.setClickingMethod(ClickingMethod.BACK_TAP);
 Back Tapping requires the installation of a [separate application](https://play.google.com/store/apps/details?id=com.prhlt.aemus.BoDTapService) to work. The application will need to be launch and will start a service that will listen to back taps.
 You will need to click ```Start BTAP Service```, then give it the appropriate permissions by opening the settings.
 
-#### Customising the movable floating button
-There are 3 customization options for the movable floating button.
-
-```java
-// Set Floating Button Color
-// Default color is cyan
-movableButtonView.setButtonColor(Color.CYAN);       // Give an int value of a color that you want
-
-// Set Floating Button Size
-// Default size is 200
-movableButtonView.setButtonSize(200);               // Give an int value of the preffered button size in pixels
-
-// Set Floating Button Opacity 
-// Default opacity is 0.1f
-movableButtonView.setButtonOpacity(0.1f);           // To set the opacity, give a floating point value between 0-1.
-```
 
 ## Demo Application
 The Accel World demo application is used to test the functionalities provided by the accel-point-click libray. The minimum API level requirement for the application is 21.
+
+
+
 ### Installation guide
 Download the ```accel-world.apk``` file from the releases folder. Run the apk on your device to install the application.
 
@@ -169,9 +144,23 @@ You will need to click ```Start BTAP Service```, then give it the appropriate pe
 * Volume up button will recalibrate the pointer in the different scenarios of the application.
 
 
-## Changes from Project Plan
-* Added position-control of accelerometer-based pointer
-* Added the ability to recalibrate the accelerometer so that the accelerometer can be used in any position comfortably
-* Demo application now demonstrates the library with 3 different scenarios (Wikipedia page, Number dial pad, Keyboard) 
-    * Instead of a screen with circular button targets of different clusterings (distance away from another button) and sizes
-    * Demo application is still used for testing, so the independent variables {Target Size, Clustered} will change to {Scenario}
+## New features
+* Demo application now demonstrates the library with other 8 different scenarios, including 3 previous activities (Wikipedia page, Number dial pad, Keyboard) and 5 new activities (Random button, Draw, Big image, Text editor, and Calculator). 
+
+Our application enables users to demo 8 different scenarios which includes:
+Keyboard: allows users to type letters in a keyboard scenario
+Numpad: allows users to dial number in a number pad scenario
+Wikipedia: allows users to click on the highlighted link in a Wikipedia liked page
+Draw: allows users to draw 
+Calculator: allows users to do some quick maths
+text editor: allows users to edit text
+RandomBtn: allows users to click on a randomly generated button
+BigImage: allows users to drag and browse a big image
+
+## improvement
+*Filtering method was applied to help the cursor movement perform in a more smooth way. 
+*delay 
+*cursor shape 
+
+ 
+
