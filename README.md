@@ -34,7 +34,7 @@ Now, update your app module's ```build.gradle``` to import the library into the 
 ```
 dependencies {
     ...
-    implementation(name:'accel-point-click', ext:'aar')
+    implementation(name:'pointandclick', ext:'aar')
     ...
 }
 ```
@@ -46,34 +46,9 @@ The pointer exists in a separate full screen view and is added to the activity e
 The following is an example of adding the pointer through code.
 
 ``` java
-// Declare MouseView object as a field of the activity class
-MouseView mouseView;
-```
-
-``` java
-// In the onCreate method, instantiate the MouseView and add it the root view group of the activity
-mouseView = new MouseView(this);
-
-// This is an example of adding to a root view that is a constraint layout
-ConstraintLayout constraintLayout = findViewById(R.id.root_layout);
-constraintLayout.addView(mouseView, -1, MouseView.getFullScreenConstraintLayoutParams());
-
-// Set the clicking target for the MouseView
-mouseView.setClickingTargetView(findViewById(R.id.root_layout));
-```
-
-The following lifecycle methods of the activity will need to be overriden. It ensures that resources are freed up when the application is not running.
-```java
-@Override
-protected void onPause() {
-    super.onPause();
-    mouseView.pause();
-}
-
-@Override
-protected void onResume() {
-    super.onResume();
-    mouseView.resume();
+//User's activity class should extend MouseAcutivity
+UserActivity extends MouseActivity{
+    
 }
 ```
 
