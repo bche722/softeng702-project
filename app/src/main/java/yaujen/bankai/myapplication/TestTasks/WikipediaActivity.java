@@ -124,6 +124,7 @@ public class WikipediaActivity extends MouseActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                view.setVisibility(View.INVISIBLE);
                 Handler timer = new Handler();
                 if (!hasStarted) {
                     timer.postDelayed(new Runnable() {
@@ -213,6 +214,7 @@ public class WikipediaActivity extends MouseActivity {
             long timeTaken = System.currentTimeMillis() - startTime;
 
             linksLeft.setText((Html.fromHtml("<b>Done!</b>")));
+            startButton.setVisibility(View.VISIBLE);
             startButton.setText("Continue");
 
             resultsIntent = new Intent(this, ResultsActivity.class);

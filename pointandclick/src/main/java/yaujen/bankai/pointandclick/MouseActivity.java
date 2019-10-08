@@ -68,7 +68,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
 
     private int delay = 1;
-    private int smooth =1;
+    private int smooth = 1;
     private final double SAMPLING_RATE = 0.02;
     private final float BEZEL_THRESHHOLD = 50.0f;
 
@@ -95,7 +95,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-
         // Sensor configs
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);
         registerSensorManagerListeners();
@@ -112,17 +111,18 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         Log.d("testInit", refPitch + " xxxx " + refRoll);
 
-        xOffsetQueue = new CustomizedQueue (smooth);
-        yOffsetQueue = new CustomizedQueue (smooth);
+        xOffsetQueue = new CustomizedQueue(smooth);
+        yOffsetQueue = new CustomizedQueue(smooth);
 
         keyDown = false;
 
         backTapService = new BackTapService(this);
 
 
-
-
         initialiseMouse();
+        currentPitch = sensorFusion.getPitch();
+        currentRoll = sensorFusion.getRoll();
+        calibratePointer();
 
 
     }
@@ -155,17 +155,17 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         double displacementVEL = velocity * SAMPLING_RATE;
 
 
-        if(controlMethod == ControlMethod.POSITION_CONTROL){
-            int xOffSet = (int) (displacementPOS*Math.sin(tiltDirection));
-            xOffsetQueue.add ( xOffSet ) ;
-            xOffSet = xOffsetQueue.getAverage ();
-            Log.d ( "xOffsetAverageTest", xOffsetQueue.toString ());
+        if (controlMethod == ControlMethod.POSITION_CONTROL) {
+            int xOffSet = (int) (displacementPOS * Math.sin(tiltDirection));
+            xOffsetQueue.add(xOffSet);
+            xOffSet = xOffsetQueue.getAverage();
+            Log.d("xOffsetAverageTest", xOffsetQueue.toString());
 
-            int yOffSet = (int) (displacementPOS*Math.cos(tiltDirection));
-            if(pitch > 0){
+            int yOffSet = (int) (displacementPOS * Math.cos(tiltDirection));
+            if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
-            yOffsetQueue.add ( yOffSet );
+            yOffsetQueue.add(yOffSet);
             yOffSet = yOffsetQueue.getAverage();
 
             mouse.updateLocation(initialX + xOffSet,
@@ -196,7 +196,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         mouseHeight = 60;
         mouseOffsetX = 0;
         mouseOffsetY = 0;
-        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY,delay);
+        Mouse arrow = new Mouse(drawableArrow, initialX, initialY, mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY, delay);
 //        Mouse smallArrow = new Mouse(drawableArrow, getRealWidth(STANDARD_CURSOR_WIDTH / 2), getRealHeight(STANDARD_CURSOR_WIDTH / 2), 0, 0);
 //        Mouse crosshair = new Mouse(drawableCrosshair, getRealWidth(60), getRealHeight(60), getRealWidth(30), getRealHeight(30));
 //        Mouse smallCrosshair = new Mouse(drawableCrosshair, getRealWidth(30), getRealHeight(30), getRealWidth(15), getRealHeight(15));
@@ -212,9 +212,13 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         mouseBitmap = m;
         mouse.setIcon(drawable);
         mouse.setWidth(width);
+        mouseWidth = width;
         mouse.setHeight(height);
+        mouseHeight = height;
         mouse.setOffsetX(offsetX);
+        mouseOffsetX = offsetX;
         mouse.setOffsetY(offsetY);
+        mouseOffsetY = offsetY;
         findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
         mouse.updateLocation(initialX, initialY);
 
@@ -307,7 +311,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 //        MotionEvent downEvent = MotionEvent.
 //                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.get_x(), (float) mouse.get_y(), 0);
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_DOWN, (float) mouse.getAverageX(), (float) mouse.getAverageY(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -322,7 +326,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long upTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis();
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_UP, (float) mouse.getAverageX(), (float) mouse.getAverageY(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
 
         downEvent.setSource(420);
@@ -338,7 +342,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         long eventTime = SystemClock.uptimeMillis();
 
         MotionEvent downEvent = MotionEvent.
-                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.getAverageX (), (float) mouse.getAverageY (), 0);
+                obtain(upTime, eventTime, MotionEvent.ACTION_MOVE, (float) mouse.getAverageX(), (float) mouse.getAverageY(), 0);
         findViewById(android.R.id.content).dispatchTouchEvent(downEvent);
         downEvent.setSource(420);
 
@@ -515,7 +519,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         return extras;
 
     }
-
 
 
     public double getRefPitch() {
