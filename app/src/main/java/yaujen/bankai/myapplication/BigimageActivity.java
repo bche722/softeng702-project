@@ -3,29 +3,17 @@ package yaujen.bankai.myapplication;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.util.DisplayMetrics;
 
-import yaujen.bankai.myapplication.Draw.PaintView;
 import yaujen.bankai.pointandclick.ClickingMethod;
 import yaujen.bankai.pointandclick.ControlMethod;
 import yaujen.bankai.pointandclick.MouseActivity;
-import yaujen.bankai.pointandclick.MouseView;
 import yaujen.bankai.pointandclick.MovableFloatingActionButton;
 
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CLICKING_METHOD;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CONTROL_METHOD;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_H;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_X;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_OFFSET_Y;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_CURSOR_W;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_DELAY;
 import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_SMOOTH;
-import static yaujen.bankai.myapplication.DemoActivity.KEY_NAME_TILT_GAIN;
 
 public class BigimageActivity extends MouseActivity {
 
-    private MouseView mouseView;
     private ConstraintLayout constraintLayout;
 
     String controlMethod;

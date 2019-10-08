@@ -39,6 +39,8 @@ import java.util.TimerTask;
  */
 public class SensorFusion {
 
+
+
     // angular speeds from gyro
     private float[] gyro = new float[3];
 
@@ -101,6 +103,8 @@ public class SensorFusion {
                 1000, TIME_CONSTANT);
 
     }
+
+
 
     public double getAzimuth() {
         return selectedOrientation[0] * 180 / Math.PI;

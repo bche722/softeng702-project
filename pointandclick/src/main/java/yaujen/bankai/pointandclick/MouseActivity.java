@@ -18,6 +18,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -38,6 +39,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
 
     private boolean keyDown;
+    private boolean calibrated = false;
 
     protected MovableFloatingActionButton buttonClicker;
 
@@ -79,6 +81,9 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     private int mouseWidth, mouseHeight, mouseOffsetX, mouseOffsetY;
     private Bitmap mouseBitmap;
 
+    private double screenRatio;
+
+
     protected static final String KEY_NAME_CONTROL_METHOD = "CONTROL_METHOD";
     protected static final String KEY_NAME_TILT_GAIN = "TILT_GAIN";
     protected static final String KEY_NAME_CLICKING_METHOD = "CLICKING_METHOD";
@@ -106,9 +111,6 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         initialY = this.getResources().getDisplayMetrics().heightPixels / 2;
 
 
-        refPitch = sensorFusion.getPitch();
-        refRoll = sensorFusion.getRoll();
-
         Log.d("testInit", refPitch + " xxxx " + refRoll);
 
         xOffsetQueue = new CustomizedQueue(smooth);
@@ -118,10 +120,17 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         backTapService = new BackTapService(this);
 
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        screenRatio = dm.heightPixels/dm.widthPixels;
+
 
         initialiseMouse();
+
         currentPitch = sensorFusion.getPitch();
         currentRoll = sensorFusion.getRoll();
+        Log.d("testInit", refPitch + " xxxx " + refRoll);
         calibratePointer();
 
 
@@ -148,6 +157,11 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         currentPitch = sensorFusion.getPitch();
         double pitch = currentPitch - refPitch; // rotation along y-axis
 
+        if (!calibrated) {
+            calibratePointer();
+            calibrated = true;
+        }
+
         double tiltMagnitude = Math.sqrt(roll * roll + pitch * pitch);
         double tiltDirection = Math.asin(roll / tiltMagnitude);
         double velocity = velTiltGain * tiltMagnitude;
@@ -161,7 +175,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
             xOffSet = xOffsetQueue.getAverage();
             Log.d("xOffsetAverageTest", xOffsetQueue.toString());
 
-            int yOffSet = (int) (displacementPOS * Math.cos(tiltDirection));
+            int yOffSet = (int) (displacementPOS * Math.cos(tiltDirection) * screenRatio);
             if (pitch > 0) {
                 yOffSet = -yOffSet; // extra stuff that wasn't in original equation from paper ... hmmm
             }
@@ -259,7 +273,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             calibratePointer();
-            Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -350,7 +364,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
     }
 
     /**
-     * The movable button is hidden at the start, so please call the method {@link MouseView#setClickingMethod(ClickingMethod)}
+     * The movable button is hidden at the start, so please call the method {@link MouseActivity#setClickingMethod(ClickingMethod)}
      *
      * @param mFab
      */
@@ -504,7 +518,7 @@ public abstract class MouseActivity extends AppCompatActivity implements SensorE
         mouse.updateLocation(initialX, initialY);
 //        }
 
-        Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Calibrated pointer, pitch: " + getRefPitch() + ", roll: " + getRefRoll(), Toast.LENGTH_SHORT).show();
 
     }
 
