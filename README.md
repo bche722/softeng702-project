@@ -1,5 +1,5 @@
-# accel-point-click 
-accel-point-click is an Android library for accelerometer-based controlling method. The clicking methods were created with minimal screen occlusion in mind. It supports:
+# pointandclick
+pointandclick is an Android library for accelerometer-based controlling method. The clicking methods were created with minimal screen occlusion in mind. It supports:
 
 2 control modes for pointing:
 - **Velocity-control** - Pointer acts like a ball under the effects of gravity.
@@ -152,3 +152,4 @@ BigImage: allows users to drag and browse a big image
 
 ##
 Link to the Github repository : https://github.com/bche722/softeng702-project
+Demo video : https://www.youtube.com/watch?v=6Xix7D8f9Yg&feature=youtu.be
