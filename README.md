@@ -150,5 +150,5 @@ BigImage: allows users to drag and browse a big image
 *delay 
 *cursor shape 
 
- 
+##
 Link to the Github repository : https://github.com/bche722/softeng702-project
