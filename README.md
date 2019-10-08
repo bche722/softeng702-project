@@ -152,4 +152,5 @@ BigImage: allows users to drag and browse a big image
 
 ##
 Link to the Github repository : https://github.com/bche722/softeng702-project
+
 Demo video : https://www.youtube.com/watch?v=6Xix7D8f9Yg&feature=youtu.be
