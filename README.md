@@ -1,5 +1,5 @@
 # accel-point-click 
-accel-point-click is an Android library for accelerometer-based pointing and clicking. The clicking methods were created with minimal screen occlusion in mind. It supports:
+accel-point-click is an Android library for accelerometer-based controlling method. The clicking methods were created with minimal screen occlusion in mind. It supports:
 
 2 control modes for pointing:
 - **Velocity-control** - Pointer acts like a ball under the effects of gravity.
@@ -8,6 +8,10 @@ accel-point-click is an Android library for accelerometer-based pointing and cli
 2 ways of clicking with minimal screen occlusion:
 - **Volume Down Button** - Volume down button is overridden to register a click when pressed on.
 - **Back Tapping** - Tapping the back of the device triggers a click.
+
+2 optional configuration for improving accuracy:
+- **Smoothing Coefficient** - process the motion sensor signal data to smooth the movement of the cursor.
+- **Delay Coefficient** - introduce delays on the cursor to cancel out the offset of hand movement when performing click.
 
 ## Using the library in your project
 Before you can use the accel-point-click functionalities in your app, you must first download and import the library into your project. The minimum API level requirement for the library is 21.
@@ -42,76 +46,85 @@ dependencies {
 Now you can begin using the library!
 
 ## Usage
-The pointer exists in a separate full screen view and is added to the activity either through the activity's code or the layout file. 
-The following is an example of adding the pointer through code.
+
+You want the current Activity to extend the MouseActivity abstract class. This class places the cursor as a drawable on the inbuilt android overlay.
+You can bind to onSensorChanged's super method to listen to sensor changes.
 
 ``` java
-//User's activity class should extend MouseAcutivity
+//User's activity class should extend MouseActivity
 UserActivity extends MouseActivity{
     
 }
 ```
 
+```
+MouseActivity {
+    ...
+    protected void setupMouse(...) {
+        ...
+        findViewById(android.R.id.content).getOverlay().add(mouse.getDrawable());
+    }
+}
+```
+### Methods provided
+- `setTiltGain(int tiltGain)` - sets the current cursor's sensitivity
+- `setSmooth(int smooth)` - sets the current cursor's smoothing coefficient
+- `setDelay(int delay)` - sets the current cursor's delay coefficient
+- `setControlMethod(ControlMethod method)` - sets the current control method (ControlMethod is a Enum class)
+- `setClickingMethod(ClickingMethod method)` - sets the current clicking method (ClickingMethod is a Enum class)
+- `setupMouse(Bitmap m, int width, int height, int offsetX, int offsetY)` - sets the current cursor's look
+- `calibratePointer()` - sets the current position of the phone as base coordinate and center the pointer
+- `simulateTouchMove()` - simulate a touch move event on the current position
+- `simulateTouchDown()` - simulate a touch down event on the current position
+- `simulateTouchUp()` - simulate a touch release event on the current position
+
+#### Customising the control mode
+``` java
+// For position-control
+setControlMethod(ControlMethod.POSITION_CONTROL);
+
+// For velocity-control
+setControlMethod(ControlMethod.VELOCITY_CONTROL);
+
+```
+
 #### Customising pointer control method
-Setting the control mode
-``` java
-// For position-control
-mouseView.enablePositionControl(true);
-
-// For velocity-control
-mouseView.enablePositionControl(false);
-
-```
-
-Configuring tilt gain settings, the settings which determines the step sizes of the pointer
-``` java
-// For position-control
-mouseView.setPosTiltGain(tiltGain);
-
-// For velocity-control
-mouseView.setVelTiltGain(tiltGain);
-```
-
-More customisation options
-```java
-// Sets the bitmap of the pointer
-mouseView.setMouseBitmap(bitmap);
-
-// Sets the reference pitch added to the rest pitch of 0, when the device is laid flat
-mouseView.setRefPitch(refPitch);
-// same as setRefPitch but the refPitch value is the current pitch of the device
-mouseView.calibratePitch();
-
-// Sets the initial point of the pointer
-mouseView.setXReference(xRef);
-mouseView.setYReference(yRef);
-
-// Enables recalibration of the pointer using the volume up button
-mouseView.enableRecalibrationByVolumeUp(true);
-
-```
-
-#### Customising pointer clicking method
-Choosing the clicking method for the pointer
 ```java
 // Volume Down Button
-mouseView.setClickingMethod(ClickingMethod.VOLUME_DOWN);
+setClickingMethod(ClickingMethod.VOLUME_DOWN);
 
 // Back Tapping
-mouseView.setClickingMethod(ClickingMethod.BACK_TAP);
+setClickingMethod(ClickingMethod.BACK_TAP);
 
 ```
 Back Tapping requires the installation of a [separate application](https://play.google.com/store/apps/details?id=com.prhlt.aemus.BoDTapService) to work. The application will need to be launch and will start a service that will listen to back taps.
 You will need to click ```Start BTAP Service```, then give it the appropriate permissions by opening the settings.
 
+#### Configuring coefficient settings, the settings which determines the step sizes of the pointer
+``` java
+// The tiltGain related to screen ratio and the default value is 35
+setTiltGain(35)
+
+//The the smooth coefficient determinate the level of filtering the shake. The default setting is no filtering.
+setSmooth(10)
+
+//The the delay coefficient determinate the level of delay of the clicking. The default setting is no delay.
+setDelay(10)
+
+```
+
+#### More customisation options
+```java
+// A default style of the corsor is provided and this method is used to change the style of the cursor.
+setupMouse(bitmapImage, width, height, offsetX, offsetY)
+
+```
 
 ## Demo Application
-The Accel World demo application is used to test the functionalities provided by the accel-point-click libray. The minimum API level requirement for the application is 21.
-
-
+The Accel World demo application is used to test the functionalities provided by the pointandclick libray. The minimum API level requirement for the application is 21.
 
 ### Installation guide
-Download the ```accel-world.apk``` file from the releases folder. Run the apk on your device to install the application.
+Download the ```app-release.apk``` file from the releases folder. Run the apk on your device to install the application.
 
 ### Note
 * Back Tapping to click requires the installation of a [separate application](https://play.google.com/store/apps/details?id=com.prhlt.aemus.BoDTapService) to work. The application will need to be launch and will start a service that will listen to back taps.
